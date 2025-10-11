@@ -1,7 +1,7 @@
 // 🔧 Core Services
 // Servicios base para la aplicación
 
-library services;
+library;
 
 export 'firebase_service.dart';
 export 'storage_service.dart';

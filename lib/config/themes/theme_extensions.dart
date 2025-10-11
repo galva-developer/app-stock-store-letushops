@@ -20,8 +20,6 @@ class ThemeExtensions {
         onSecondary: ColorConstants.grey900,
         surface: ColorConstants.grey900,
         onSurface: ColorConstants.grey100,
-        background: ColorConstants.grey900,
-        onBackground: ColorConstants.grey100,
         error: ColorConstants.red400,
         onError: ColorConstants.grey900,
       ),

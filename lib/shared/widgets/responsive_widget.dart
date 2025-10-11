@@ -11,12 +11,12 @@ class ResponsiveWidget extends StatelessWidget {
   final Widget? largeDesktop;
 
   const ResponsiveWidget({
-    Key? key,
+    super.key,
     required this.mobile,
     this.tablet,
     this.desktop,
     this.largeDesktop,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -36,7 +36,7 @@ class ResponsiveWidget extends StatelessWidget {
 class ResponsiveBuilder extends StatelessWidget {
   final Widget Function(BuildContext context, DeviceType deviceType) builder;
 
-  const ResponsiveBuilder({Key? key, required this.builder}) : super(key: key);
+  const ResponsiveBuilder({super.key, required this.builder});
 
   @override
   Widget build(BuildContext context) {

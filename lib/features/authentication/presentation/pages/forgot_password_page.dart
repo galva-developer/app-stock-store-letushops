@@ -14,7 +14,7 @@ import '../providers/auth_state.dart';
 /// - Manejo de errores
 /// - Diseño consistente con la aplicación
 class ForgotPasswordPage extends StatefulWidget {
-  const ForgotPasswordPage({Key? key}) : super(key: key);
+  const ForgotPasswordPage({super.key});
 
   @override
   State<ForgotPasswordPage> createState() => _ForgotPasswordPageState();

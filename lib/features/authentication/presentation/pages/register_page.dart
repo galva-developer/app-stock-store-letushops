@@ -16,7 +16,7 @@ import '../providers/auth_state.dart';
 /// - Diseño responsive
 /// - Integración con AuthProvider
 class RegisterPage extends StatefulWidget {
-  const RegisterPage({Key? key}) : super(key: key);
+  const RegisterPage({super.key});
 
   @override
   State<RegisterPage> createState() => _RegisterPageState();

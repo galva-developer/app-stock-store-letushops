@@ -6,7 +6,7 @@ import '../../core/constants/constants.dart';
 import 'responsive_widget.dart';
 
 class ColorPalettePreview extends StatelessWidget {
-  const ColorPalettePreview({Key? key}) : super(key: key);
+  const ColorPalettePreview({super.key});
 
   @override
   Widget build(BuildContext context) {

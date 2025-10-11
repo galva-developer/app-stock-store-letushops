@@ -5,7 +5,7 @@ import '../config/themes/app_theme.dart';
 /// Demuestra cómo implementar el tema en la aplicación principal
 
 class ThemeDemo extends StatelessWidget {
-  const ThemeDemo({Key? key}) : super(key: key);
+  const ThemeDemo({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +20,7 @@ class ThemeDemo extends StatelessWidget {
       builder: (context, child) {
         return MediaQuery(
           data: MediaQuery.of(context).copyWith(
-            textScaleFactor: 1.0, // Evita escalado automático no deseado
+            textScaler: TextScaler.linear(1.0), // Evita escalado automático no deseado
           ),
           child: child ?? const SizedBox(),
         );
@@ -33,7 +33,7 @@ class ThemeDemo extends StatelessWidget {
 
 /// 📱 PANTALLA DE DEMOSTRACIÓN DEL TEMA
 class ThemeDemoScreen extends StatelessWidget {
-  const ThemeDemoScreen({Key? key}) : super(key: key);
+  const ThemeDemoScreen({super.key});
 
   @override
   Widget build(BuildContext context) {

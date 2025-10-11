@@ -14,7 +14,7 @@ import '../providers/auth_state.dart';
 /// - Transición automática según estado de autenticación
 /// - Paleta de colores rojo-blanco-negro
 class SplashPage extends StatefulWidget {
-  const SplashPage({Key? key}) : super(key: key);
+  const SplashPage({super.key});
 
   @override
   State<SplashPage> createState() => _SplashPageState();

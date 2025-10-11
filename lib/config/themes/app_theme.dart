@@ -46,11 +46,8 @@ class AppTheme {
 
         surface: ColorConstants.surfaceColor, // Blanco puro
         onSurface: ColorConstants.textPrimaryColor, // Negro
-        surfaceVariant: ColorConstants.grey50, // Blanco grisáceo
-        onSurfaceVariant: ColorConstants.grey700, // Gris oscuro
-
-        background: ColorConstants.backgroundColor, // Blanco base
-        onBackground: ColorConstants.textPrimaryColor, // Negro
+        surfaceContainerHighest: ColorConstants.grey50, // Blanco grisáceo
+        onSurfaceVariant: ColorConstants.grey700, // Negro
 
         error: ColorConstants.errorColor, // Rojo error
         onError: ColorConstants.textOnPrimaryColor, // Blanco en error
@@ -355,14 +352,14 @@ class AppTheme {
 
       // 🎛️ Switch Theme
       switchTheme: SwitchThemeData(
-        thumbColor: MaterialStateProperty.resolveWith((states) {
-          if (states.contains(MaterialState.selected)) {
+        thumbColor: WidgetStateProperty.resolveWith((states) {
+          if (states.contains(WidgetState.selected)) {
             return ColorConstants.primaryColor;
           }
           return ColorConstants.grey400;
         }),
-        trackColor: MaterialStateProperty.resolveWith((states) {
-          if (states.contains(MaterialState.selected)) {
+        trackColor: WidgetStateProperty.resolveWith((states) {
+          if (states.contains(WidgetState.selected)) {
             return ColorConstants.primaryLightColor;
           }
           return ColorConstants.grey300;
@@ -371,13 +368,13 @@ class AppTheme {
 
       // ✅ Checkbox Theme
       checkboxTheme: CheckboxThemeData(
-        fillColor: MaterialStateProperty.resolveWith((states) {
-          if (states.contains(MaterialState.selected)) {
+        fillColor: WidgetStateProperty.resolveWith((states) {
+          if (states.contains(WidgetState.selected)) {
             return ColorConstants.primaryColor;
           }
           return Colors.transparent;
         }),
-        checkColor: MaterialStateProperty.all(
+        checkColor: WidgetStateProperty.all(
           ColorConstants.textOnPrimaryColor,
         ),
         side: const BorderSide(color: ColorConstants.grey400, width: 2),

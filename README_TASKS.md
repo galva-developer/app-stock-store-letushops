@@ -163,14 +163,14 @@ Este documento detalla la implementación técnica completa del proyecto Stock L
 - [x] **3.1.4** Definir estilos de componentes (botones, cards, inputs)
 
 ### 3.2 Sistema de Rutas
-- [ ] **3.2.1** Crear `lib/config/routes/app_routes.dart` con GoRouter
-- [ ] **3.2.2** Definir rutas principales:
+- [x] **3.2.1** Crear `lib/config/routes/app_routes.dart` con GoRouter
+- [x] **3.2.2** Definir rutas principales:
   - `/splash`
   - `/login`
   - `/register`
   - `/home`
   - `/products`
-  - `/camera`
+  - `/camera` 
   - `/inventory`
   - `/reports`
   - `/profile`

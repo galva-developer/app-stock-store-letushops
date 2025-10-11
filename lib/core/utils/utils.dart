@@ -1,7 +1,7 @@
 // 🛠️ Core Utils
 // Utilidades y helpers para la aplicación
 
-library utils;
+library;
 
 export 'date_utils.dart';
 export 'image_utils.dart';

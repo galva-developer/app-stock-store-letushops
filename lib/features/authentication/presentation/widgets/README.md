@@ -392,13 +392,6 @@ class _LoginFormState extends State<LoginForm> {
 }
 ```
 
-## 🔄 Estado de Implementación
-
-- [x] **2.6.1** CustomTextField - ✅ Implementado
-- [x] **2.6.2** AuthButton - ✅ Implementado  
-- [x] **2.6.3** LogoWidget - ✅ Implementado
-- [x] **2.6.4** FormValidators - ✅ Implementado
-
 ## 🚀 Próximos Pasos
 
 Una vez completados estos widgets, se pueden utilizar para:
