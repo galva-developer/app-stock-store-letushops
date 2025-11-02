@@ -47,28 +47,6 @@ abstract class AuthRepository {
     required String password,
   });
 
-  /// Registra un nuevo usuario con email y contraseña
-  ///
-  /// Parameters:
-  /// - `email`: Correo electrónico del nuevo usuario
-  /// - `password`: Contraseña del nuevo usuario
-  /// - `displayName`: Nombre completo del usuario (opcional)
-  ///
-  /// Returns:
-  /// - `AuthUser` con los datos del usuario registrado
-  ///
-  /// Throws:
-  /// - `EmailAlreadyInUseException` si el email ya está registrado
-  /// - `WeakPasswordException` si la contraseña es muy débil
-  /// - `InvalidEmailFormatException` si el formato del email es inválido
-  /// - `NetworkException` si hay problemas de conectividad
-  /// - `AuthException` para otros errores de autenticación
-  Future<AuthUser> registerWithEmailAndPassword({
-    required String email,
-    required String password,
-    String? displayName,
-  });
-
   /// Cierra la sesión del usuario actual
   ///
   /// Throws:

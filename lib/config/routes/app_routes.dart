@@ -10,15 +10,23 @@ import 'route_guard.dart';
 
 // Authentication pages
 import '../../features/authentication/presentation/pages/login_page.dart';
-import '../../features/authentication/presentation/pages/register_page.dart';
 import '../../features/authentication/presentation/pages/forgot_password_page.dart';
+
+// Main layout
+import '../../features/home/presentation/pages/main_layout.dart';
+
+// Feature pages
+import '../../features/home/presentation/pages/home_page.dart';
+import '../../features/products/presentation/pages/products_page.dart';
+import '../../features/camera/presentation/pages/camera_page.dart';
+import '../../features/inventory/presentation/pages/inventory_page.dart';
+import '../../features/reports/presentation/pages/reports_page.dart';
 
 /// Main application routes configuration using GoRouter
 class AppRoutes {
   // Route paths
   static const String splash = '/splash';
   static const String login = '/login';
-  static const String register = '/register';
   static const String forgotPassword = '/forgot-password';
   static const String home = '/home';
   static const String products = '/products';
@@ -58,16 +66,6 @@ class AppRoutes {
             ),
       ),
       GoRoute(
-        path: register,
-        name: 'register',
-        pageBuilder:
-            (context, state) => buildPageWithTransition(
-              context: context,
-              state: state,
-              child: const RegisterPage(),
-            ),
-      ),
-      GoRoute(
         path: forgotPassword,
         name: 'forgot-password',
         pageBuilder:
@@ -78,57 +76,94 @@ class AppRoutes {
             ),
       ),
 
-      // Protected routes
-      GoRoute(
-        path: home,
-        name: 'home',
-        pageBuilder:
-            (context, state) => buildPageWithTransition(
-              context: context,
-              state: state,
-              child: const HomePage(),
-            ),
+      // Protected routes with MainLayout
+      StatefulShellRoute.indexedStack(
+        builder: (context, state, navigationShell) {
+          return MainLayout(
+            currentIndex: navigationShell.currentIndex,
+            child: navigationShell,
+          );
+        },
+        branches: [
+          // Home branch
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: home,
+                name: 'home',
+                pageBuilder:
+                    (context, state) => buildPageWithTransition(
+                      context: context,
+                      state: state,
+                      child: const HomePage(),
+                    ),
+              ),
+            ],
+          ),
+          // Products branch
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: products,
+                name: 'products',
+                pageBuilder:
+                    (context, state) => buildPageWithTransition(
+                      context: context,
+                      state: state,
+                      child: const ProductsPage(),
+                    ),
+              ),
+            ],
+          ),
+          // Camera branch
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: camera,
+                name: 'camera',
+                pageBuilder:
+                    (context, state) => buildPageWithTransition(
+                      context: context,
+                      state: state,
+                      child: const CameraPage(),
+                    ),
+              ),
+            ],
+          ),
+          // Inventory branch
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: inventory,
+                name: 'inventory',
+                pageBuilder:
+                    (context, state) => buildPageWithTransition(
+                      context: context,
+                      state: state,
+                      child: const InventoryPage(),
+                    ),
+              ),
+            ],
+          ),
+          // Reports branch
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: reports,
+                name: 'reports',
+                pageBuilder:
+                    (context, state) => buildPageWithTransition(
+                      context: context,
+                      state: state,
+                      child: const ReportsPage(),
+                    ),
+              ),
+            ],
+          ),
+        ],
       ),
-      GoRoute(
-        path: products,
-        name: 'products',
-        pageBuilder:
-            (context, state) => buildPageWithTransition(
-              context: context,
-              state: state,
-              child: const ProductsPage(),
-            ),
-      ),
-      GoRoute(
-        path: inventory,
-        name: 'inventory',
-        pageBuilder:
-            (context, state) => buildPageWithTransition(
-              context: context,
-              state: state,
-              child: const InventoryPage(),
-            ),
-      ),
-      GoRoute(
-        path: camera,
-        name: 'camera',
-        pageBuilder:
-            (context, state) => buildPageWithTransition(
-              context: context,
-              state: state,
-              child: const CameraPage(),
-            ),
-      ),
-      GoRoute(
-        path: reports,
-        name: 'reports',
-        pageBuilder:
-            (context, state) => buildPageWithTransition(
-              context: context,
-              state: state,
-              child: const ReportsPage(),
-            ),
-      ),
+
+      // Profile route (outside main navigation)
       GoRoute(
         path: profile,
         name: 'profile',
@@ -139,6 +174,8 @@ class AppRoutes {
               child: const ProfilePage(),
             ),
       ),
+
+      // Settings route (outside main navigation)
       GoRoute(
         path: settings,
         name: 'settings',
@@ -232,25 +269,25 @@ class _SplashPageState extends State<SplashPage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            // Logo o icono de la app
+            // Logo de la app
             Container(
-              width: 120,
-              height: 120,
+              width: 140,
+              height: 140,
               decoration: BoxDecoration(
                 color: Colors.white,
-                borderRadius: BorderRadius.circular(20),
+                borderRadius: BorderRadius.circular(24),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.1),
-                    blurRadius: 10,
-                    offset: const Offset(0, 4),
+                    color: Colors.black.withOpacity(0.2),
+                    blurRadius: 20,
+                    offset: const Offset(0, 8),
                   ),
                 ],
               ),
-              child: const Icon(
-                Icons.inventory_2,
-                size: 60,
-                color: Colors.blue,
+              padding: const EdgeInsets.all(20),
+              child: Image.asset(
+                'assets/images/logo/logo-transparente.png',
+                fit: BoxFit.contain,
               ),
             ),
             const SizedBox(height: 32),
@@ -279,84 +316,46 @@ class _SplashPageState extends State<SplashPage> {
   }
 }
 
-class HomePage extends StatelessWidget {
-  const HomePage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Inicio'),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.logout),
-            onPressed: () {
-              context.read<AuthProvider>().logout();
-            },
-          ),
-        ],
-      ),
-      body: const Center(child: Text('Página de Inicio')),
-    );
-  }
-}
-
-class ProductsPage extends StatelessWidget {
-  const ProductsPage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Productos')),
-      body: const Center(child: Text('Página de Productos')),
-    );
-  }
-}
-
-class InventoryPage extends StatelessWidget {
-  const InventoryPage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Inventario')),
-      body: const Center(child: Text('Página de Inventario')),
-    );
-  }
-}
-
-class CameraPage extends StatelessWidget {
-  const CameraPage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Cámara')),
-      body: const Center(child: Text('Página de Cámara')),
-    );
-  }
-}
-
-class ReportsPage extends StatelessWidget {
-  const ReportsPage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Reportes')),
-      body: const Center(child: Text('Página de Reportes')),
-    );
-  }
-}
-
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final authProvider = context.watch<AuthProvider>();
+    final user = authProvider.currentUser;
+
     return Scaffold(
       appBar: AppBar(title: const Text('Perfil')),
-      body: const Center(child: Text('Página de Perfil')),
+      body: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          children: [
+            const CircleAvatar(radius: 50, child: Icon(Icons.person, size: 50)),
+            const SizedBox(height: 16),
+            Text(
+              user?.email ?? 'Usuario',
+              style: Theme.of(context).textTheme.titleLarge,
+            ),
+            const SizedBox(height: 32),
+            ListTile(
+              leading: const Icon(Icons.email),
+              title: const Text('Email'),
+              subtitle: Text(user?.email ?? 'N/A'),
+            ),
+            const Divider(),
+            ListTile(
+              leading: const Icon(Icons.logout, color: Colors.red),
+              title: const Text(
+                'Cerrar sesión',
+                style: TextStyle(color: Colors.red),
+              ),
+              onTap: () async {
+                await authProvider.logout();
+              },
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
@@ -368,7 +367,33 @@ class SettingsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Configuración')),
-      body: const Center(child: Text('Página de Configuración')),
+      body: ListView(
+        children: [
+          ListTile(
+            leading: const Icon(Icons.palette),
+            title: const Text('Tema'),
+            subtitle: const Text('Personaliza la apariencia'),
+            trailing: const Icon(Icons.chevron_right),
+            onTap: () {},
+          ),
+          const Divider(),
+          ListTile(
+            leading: const Icon(Icons.notifications),
+            title: const Text('Notificaciones'),
+            subtitle: const Text('Gestiona tus alertas'),
+            trailing: const Icon(Icons.chevron_right),
+            onTap: () {},
+          ),
+          const Divider(),
+          ListTile(
+            leading: const Icon(Icons.info),
+            title: const Text('Acerca de'),
+            subtitle: const Text('Stock LetuShops v1.0.0'),
+            trailing: const Icon(Icons.chevron_right),
+            onTap: () {},
+          ),
+        ],
+      ),
     );
   }
 }

@@ -96,64 +96,6 @@ class AuthRepositoryImpl implements AuthRepository {
     }
   }
 
-  /// Registra un nuevo usuario con email y contraseña
-  ///
-  /// Parameters:
-  /// - [email] Correo electrónico del nuevo usuario
-  /// - [password] Contraseña del nuevo usuario
-  /// - [displayName] Nombre completo del usuario (opcional)
-  ///
-  /// Returns:
-  /// - [AuthUser] con los datos del usuario registrado
-  ///
-  /// Throws:
-  /// - [EmailAlreadyInUseException] si el email ya está registrado
-  /// - [WeakPasswordException] si la contraseña es muy débil
-  /// - [InvalidEmailFormatException] si el formato del email es inválido
-  /// - [NetworkException] si hay problemas de conectividad
-  /// - [AuthException] para otros errores de autenticación
-  @override
-  Future<AuthUser> registerWithEmailAndPassword({
-    required String email,
-    required String password,
-    String? displayName,
-  }) async {
-    try {
-      // Validaciones básicas
-      if (email.trim().isEmpty) {
-        throw const RequiredFieldException(fieldName: 'email');
-      }
-      if (password.isEmpty) {
-        throw const RequiredFieldException(fieldName: 'password');
-      }
-
-      // Validar formato de email
-      if (!_isValidEmail(email)) {
-        throw const InvalidEmailFormatException();
-      }
-
-      // Validar longitud de contraseña
-      if (password.length < 6) {
-        throw const PasswordTooShortException();
-      }
-
-      // Validar displayName si se proporciona
-      if (displayName != null && displayName.trim().isEmpty) {
-        displayName = null; // Convertir string vacío a null
-      }
-
-      return await _firebaseAuthDataSource.registerWithEmailAndPassword(
-        email: email,
-        password: password,
-        displayName: displayName,
-      );
-    } on AuthException {
-      rethrow;
-    } catch (e) {
-      throw AuthExceptionMapper.fromException(e);
-    }
-  }
-
   /// Cierra la sesión del usuario actual
   ///
   /// Throws:

@@ -3,7 +3,6 @@ import 'package:flutter/foundation.dart';
 import '../../domain/entities/auth_user.dart';
 import '../../domain/exceptions/auth_exceptions.dart';
 import '../../domain/usecases/login_usecase.dart';
-import '../../domain/usecases/register_usecase.dart';
 import '../../domain/usecases/logout_usecase.dart';
 import '../../domain/usecases/reset_password_usecase.dart';
 import '../../domain/usecases/get_current_user_usecase.dart';
@@ -38,7 +37,6 @@ import 'auth_state.dart';
 class AuthProvider extends ChangeNotifier {
   // Casos de uso
   final LoginUseCase _loginUseCase;
-  final RegisterUseCase _registerUseCase;
   final LogoutUseCase _logoutUseCase;
   final ResetPasswordUseCase _resetPasswordUseCase;
   final GetCurrentUserUseCase _getCurrentUserUseCase;
@@ -51,13 +49,11 @@ class AuthProvider extends ChangeNotifier {
   /// Constructor que recibe todas las dependencias
   AuthProvider({
     required LoginUseCase loginUseCase,
-    required RegisterUseCase registerUseCase,
     required LogoutUseCase logoutUseCase,
     required ResetPasswordUseCase resetPasswordUseCase,
     required GetCurrentUserUseCase getCurrentUserUseCase,
     required AuthRepository authRepository,
   }) : _loginUseCase = loginUseCase,
-       _registerUseCase = registerUseCase,
        _logoutUseCase = logoutUseCase,
        _resetPasswordUseCase = resetPasswordUseCase,
        _getCurrentUserUseCase = getCurrentUserUseCase,
@@ -132,35 +128,6 @@ class AuthProvider extends ChangeNotifier {
       return true;
     } catch (e) {
       _handleError(e, 'Error al iniciar sesión');
-      return false;
-    }
-  }
-
-  /// Registra un nuevo usuario
-  ///
-  /// [email] Email del nuevo usuario
-  /// [password] Contraseña del nuevo usuario
-  /// [displayName] Nombre para mostrar (opcional)
-  ///
-  /// Retorna true si el registro fue exitoso, false en caso contrario
-  Future<bool> register({
-    required String email,
-    required String password,
-    String? displayName,
-  }) async {
-    try {
-      _setState(const AuthLoading(message: 'Creando cuenta...'));
-
-      final user = await _registerUseCase.call(
-        email: email,
-        password: password,
-        displayName: displayName,
-      );
-
-      _setState(AuthAuthenticated(user: user));
-      return true;
-    } catch (e) {
-      _handleError(e, 'Error al crear la cuenta');
       return false;
     }
   }
@@ -312,7 +279,6 @@ class AuthProviderFactory {
   static AuthProvider create({required AuthRepository authRepository}) {
     // Crear casos de uso
     final loginUseCase = LoginUseCase(authRepository);
-    final registerUseCase = RegisterUseCase(authRepository);
     final logoutUseCase = LogoutUseCase(authRepository);
     final resetPasswordUseCase = ResetPasswordUseCase(authRepository);
     final getCurrentUserUseCase = GetCurrentUserUseCase(authRepository);
@@ -320,7 +286,6 @@ class AuthProviderFactory {
     // Crear y retornar el provider
     return AuthProvider(
       loginUseCase: loginUseCase,
-      registerUseCase: registerUseCase,
       logoutUseCase: logoutUseCase,
       resetPasswordUseCase: resetPasswordUseCase,
       getCurrentUserUseCase: getCurrentUserUseCase,

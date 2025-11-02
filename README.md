@@ -96,7 +96,41 @@ flutter run -d ios
 flutter run -d chrome
 ```
 
-## 📁 Estructura del Proyecto
+## � Primer Acceso
+
+### Crear tu Usuario en Firebase Console
+
+**Todos los usuarios deben ser creados por el administrador desde Firebase Console:**
+
+1. **Ve a [Firebase Console](https://console.firebase.google.com/)**
+2. **Selecciona tu proyecto** (stock-letu-shops)
+3. **Navega a Authentication > Users**
+4. **Haz clic en "Add user"**
+5. **Crea el usuario:**
+   - Email: admin@letushops.com
+   - Password: Admin123456 (o la que prefieras)
+6. **Inicia sesión en la app** con estas credenciales
+
+### Flujo de Acceso
+
+1. **Verás la pantalla de Splash** (2 segundos)
+2. **Serás redirigido a Login**
+3. **Ingresa tus credenciales** creadas en Firebase Console
+4. **¡Listo!** Ya tienes acceso completo
+
+### Credenciales de Prueba Sugeridas
+
+```
+📧 Email: admin@letushops.com
+🔑 Password: Admin123456
+```
+
+> ⚠️ **IMPORTANTE:** No existe opción de auto-registro en la aplicación.
+> Todos los usuarios deben ser creados desde Firebase Console por el administrador.
+> 
+> 📖 Ver **[ACCESS_GUIDE.md](./ACCESS_GUIDE.md)** para instrucciones detalladas.
+
+## �📁 Estructura del Proyecto
 
 ```
 lib/

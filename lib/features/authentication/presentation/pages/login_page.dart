@@ -89,11 +89,6 @@ class _LoginPageState extends State<LoginPage> {
                       // Divider
                       _buildDivider(),
 
-                      const SizedBox(height: 24),
-
-                      // Enlace para registro
-                      _buildRegisterLink(),
-
                       // Spacer para empujar contenido hacia arriba
                       const Spacer(),
 
@@ -116,32 +111,25 @@ class _LoginPageState extends State<LoginPage> {
       children: [
         const SizedBox(height: 20),
 
-        // Logo
+        // Logo de la aplicación
         Container(
-          width: 80,
-          height: 80,
+          width: 100,
+          height: 100,
           decoration: BoxDecoration(
+            color: Colors.white,
             shape: BoxShape.circle,
-            gradient: const LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [
-                Color(0xFFD32F2F), // Rojo principal
-                Color(0xFFB71C1C), // Rojo oscuro
-              ],
-            ),
             boxShadow: [
               BoxShadow(
-                color: const Color(0xFFD32F2F).withOpacity(0.3),
-                blurRadius: 15,
+                color: const Color(0xFFD32F2F).withOpacity(0.2),
+                blurRadius: 20,
                 offset: const Offset(0, 8),
               ),
             ],
           ),
-          child: const Icon(
-            Icons.inventory_2_rounded,
-            size: 40,
-            color: Colors.white,
+          padding: const EdgeInsets.all(20),
+          child: Image.asset(
+            'assets/images/logo/logo-transparente.png',
+            fit: BoxFit.contain,
           ),
         ),
 
@@ -387,32 +375,6 @@ class _LoginPageState extends State<LoginPage> {
           ),
         ),
         Expanded(child: Divider(color: Colors.grey[300])),
-      ],
-    );
-  }
-
-  /// Construye el enlace para registro
-  Widget _buildRegisterLink() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Text(
-          '¿No tienes una cuenta? ',
-          style: TextStyle(color: Colors.grey[600], fontSize: 14),
-        ),
-        TextButton(
-          onPressed: () {
-            Navigator.pushNamed(context, '/register');
-          },
-          child: const Text(
-            'Regístrate',
-            style: TextStyle(
-              color: Color(0xFFD32F2F),
-              fontSize: 14,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-        ),
       ],
     );
   }

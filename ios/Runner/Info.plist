@@ -45,5 +45,28 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+	
+	<!-- Deep linking configuration -->
+	<!-- Custom URL Scheme -->
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLName</key>
+			<string>com.letushops.stockletushops</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>stockletushops</string>
+			</array>
+		</dict>
+	</array>
+	
+	<!-- Universal Links (App Links) -->
+	<key>com.apple.developer.associated-domains</key>
+	<array>
+		<string>applinks:letushops.com</string>
+		<string>applinks:www.letushops.com</string>
+	</array>
 </dict>
 </plist>

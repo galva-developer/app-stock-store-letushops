@@ -120,56 +120,6 @@ class FirebaseAuthDataSource {
     }
   }
 
-  /// Registra un nuevo usuario con email y contraseña
-  Future<UserModel> registerWithEmailAndPassword({
-    required String email,
-    required String password,
-    String? displayName,
-  }) async {
-    try {
-      // Verificar si el email ya está en uso
-      final signInMethods = await _firebaseAuth.fetchSignInMethodsForEmail(
-        email.trim(),
-      );
-      if (signInMethods.isNotEmpty) {
-        throw const EmailAlreadyInUseException();
-      }
-
-      final credential = await _firebaseAuth.createUserWithEmailAndPassword(
-        email: email.trim(),
-        password: password,
-      );
-
-      if (credential.user == null) {
-        throw const UnknownAuthException(
-          message: 'Registration successful but user is null',
-        );
-      }
-
-      // Actualizar perfil si se proporciona displayName
-      if (displayName != null && displayName.isNotEmpty) {
-        await credential.user!.updateDisplayName(displayName.trim());
-        await credential.user!.reload();
-      }
-
-      var userModel = UserModel.fromFirebaseUser(
-        credential.user!,
-      ).copyWith(displayName: displayName?.trim());
-
-      // Crear documento del usuario en Firestore
-      await _createUserDocument(userModel);
-
-      // Enviar email de verificación
-      await credential.user!.sendEmailVerification();
-
-      return userModel;
-    } on FirebaseAuthException catch (e) {
-      throw AuthExceptionMapper.fromFirebaseAuthCode(e.code, e.message);
-    } catch (e) {
-      throw AuthExceptionMapper.fromException(e);
-    }
-  }
-
   /// Cierra la sesión del usuario actual
   Future<void> signOut() async {
     try {

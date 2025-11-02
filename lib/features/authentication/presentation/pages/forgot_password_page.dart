@@ -115,24 +115,34 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
   Widget _buildHeader() {
     return Column(
       children: [
-        // Ícono
+        // Logo o ícono según el estado
         Container(
-          width: 80,
-          height: 80,
+          width: 90,
+          height: 90,
           decoration: BoxDecoration(
+            color: Colors.white,
             shape: BoxShape.circle,
-            color:
-                _emailSent
-                    ? Colors.green.withOpacity(0.1)
-                    : const Color(0xFFD32F2F).withOpacity(0.1),
+            boxShadow: [
+              BoxShadow(
+                color: (_emailSent ? Colors.green : const Color(0xFFD32F2F))
+                    .withOpacity(0.15),
+                blurRadius: 20,
+                offset: const Offset(0, 8),
+              ),
+            ],
           ),
-          child: Icon(
-            _emailSent
-                ? Icons.mark_email_read_outlined
-                : Icons.lock_reset_outlined,
-            size: 40,
-            color: _emailSent ? Colors.green : const Color(0xFFD32F2F),
-          ),
+          padding: const EdgeInsets.all(18),
+          child:
+              _emailSent
+                  ? Icon(
+                    Icons.mark_email_read_outlined,
+                    size: 45,
+                    color: Colors.green,
+                  )
+                  : Image.asset(
+                    'assets/images/logo/logo-transparente.png',
+                    fit: BoxFit.contain,
+                  ),
         ),
 
         const SizedBox(height: 24),
