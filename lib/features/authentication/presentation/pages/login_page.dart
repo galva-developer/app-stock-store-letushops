@@ -401,14 +401,23 @@ class _LoginPageState extends State<LoginPage> {
     FocusScope.of(context).unfocus();
 
     final authProvider = context.read<AuthProvider>();
-    final success = await authProvider.login(
-      _emailController.text.trim(),
-      _passwordController.text,
-    );
+    final email = _emailController.text.trim();
+    final password = _passwordController.text;
+
+    final success = await authProvider.login(email, password);
 
     if (success && mounted) {
-      // Navegación se maneja automáticamente por el AuthProvider
-      Navigator.pushReplacementNamed(context, '/home');
+      // Obtener el usuario actual para verificar su rol
+      final currentUser = authProvider.currentUser;
+
+      // Redirigir según el rol del usuario
+      if (currentUser != null && currentUser.isAdmin) {
+        // Si es administrador, redirigir al panel de administración
+        Navigator.pushReplacementNamed(context, '/admin/users');
+      } else {
+        // Navegación normal al home para managers y empleados
+        Navigator.pushReplacementNamed(context, '/home');
+      }
     }
   }
 

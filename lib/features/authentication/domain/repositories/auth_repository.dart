@@ -243,4 +243,19 @@ abstract class AuthRepository {
   /// - `NetworkException` si hay problemas de conectividad
   /// - `AuthException` para otros errores
   Future<bool> isEmailAvailable(String email);
+
+  /// Elimina un usuario del sistema (solo para administradores)
+  ///
+  /// Esta operación es irreversible y elimina tanto el usuario de
+  /// Firebase Authentication como sus datos de Firestore.
+  ///
+  /// Parameters:
+  /// - `userId`: ID del usuario a eliminar
+  ///
+  /// Throws:
+  /// - `InsufficientPermissionsException` si no tiene permisos de admin
+  /// - `UserNotFoundException` si el usuario no existe
+  /// - `NetworkException` si hay problemas de conectividad
+  /// - `AuthException` para otros errores
+  Future<void> deleteUser({required String userId});
 }

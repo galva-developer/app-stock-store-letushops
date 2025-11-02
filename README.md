@@ -30,6 +30,8 @@ Una aplicación Flutter revolucionaria que optimiza la gestión de stock mediant
 - ✅ Alertas de stock bajo
 - ✅ Historial de movimientos
 - ✅ Interfaz intuitiva y responsiva
+- ✅ **Sistema de roles y permisos**
+- ✅ **Panel de administración de usuarios**
 
 ## 🏗️ Arquitectura del Proyecto
 
@@ -96,7 +98,31 @@ flutter run -d ios
 flutter run -d chrome
 ```
 
-## � Primer Acceso
+## 🔐 Primer Acceso y Sistema de Roles
+
+### Jerarquía de Usuarios
+
+La aplicación cuenta con un **sistema de roles jerárquico** con tres niveles de permisos:
+
+#### 🔴 Administrador (Admin)
+- **Acceso completo** al sistema
+- Gestión de usuarios (crear, editar, eliminar)
+- Cambio de roles y estados de usuarios
+- Acceso al panel de administración
+- Todas las funciones de Manager y Employee
+
+#### 🔵 Manager (Gerente)
+- Gestión completa de inventario
+- Acceso a reportes avanzados
+- Supervisión de empleados
+- Gestión de productos y stock
+- Todas las funciones de Employee
+
+#### ⚪ Employee (Empleado)
+- Operaciones básicas de inventario
+- Captura de productos con cámara
+- Consulta de stock
+- Actualización de productos asignados
 
 ### Crear tu Usuario en Firebase Console
 
@@ -108,8 +134,13 @@ flutter run -d chrome
 4. **Haz clic en "Add user"**
 5. **Crea el usuario:**
    - Email: admin@letushops.com
-   - Password: Admin123456 (o la que prefieras)
-6. **Inicia sesión en la app** con estas credenciales
+   - Password: password
+6. **Configura el rol en Firestore:**
+   - Ve a Firestore Database
+   - Navega a la colección `users`
+   - Encuentra el documento con el UID del usuario creado
+   - Agrega/edita el campo `role` con valor `admin`
+7. **Inicia sesión en la app** con estas credenciales
 
 ### Flujo de Acceso
 
@@ -118,12 +149,38 @@ flutter run -d chrome
 3. **Ingresa tus credenciales** creadas en Firebase Console
 4. **¡Listo!** Ya tienes acceso completo
 
-### Credenciales de Prueba Sugeridas
+### Credenciales de Administrador Principal
 
 ```
 📧 Email: admin@letushops.com
-🔑 Password: Admin123456
+🔑 Password: [Configura tu propia contraseña segura]
+👑 Rol: Administrador
 ```
+
+> **🎯 ACCESO DE ADMINISTRADOR:** 
+> Al iniciar sesión con un usuario que tenga `role: "admin"` en Firestore, serás redirigido automáticamente al **Panel de Administración de Usuarios** donde podrás:
+> - Ver todos los usuarios registrados
+> - Cambiar roles de usuarios (Employee ↔ Manager ↔ Admin)
+> - Cambiar estados (Activo, Suspendido, Inactivo)
+> - Eliminar usuarios
+> - Filtrar y buscar usuarios
+> - Ver estadísticas de usuarios
+
+### Credenciales de Prueba Adicionales
+
+```
+👤 Manager de Prueba:
+📧 Email: manager@letushops.com
+🔑 Password: [Configura tu propia contraseña]
+
+👤 Empleado de Prueba:
+📧 Email: empleado@letushops.com
+🔑 Password: [Configura tu propia contraseña]
+```
+
+> 🔒 **Seguridad:** Las contraseñas no se almacenan en el código fuente.
+> Todos los usuarios deben ser creados en Firebase Authentication y
+> configurados en Firestore con el rol correspondiente.
 
 > ⚠️ **IMPORTANTE:** No existe opción de auto-registro en la aplicación.
 > Todos los usuarios deben ser creados desde Firebase Console por el administrador.
@@ -160,6 +217,23 @@ lib/
 ### 1. Firestore Database
 ```javascript
 // Estructura de la base de datos
+
+// Colección de usuarios
+users: {
+  userId: {
+    email: string,
+    displayName: string,
+    photoURL: string,
+    emailVerified: boolean,
+    role: string,              // 'admin', 'manager', 'employee'
+    status: string,            // 'active', 'suspended', 'inactive'
+    creationTime: timestamp,
+    lastSignInTime: timestamp,
+    updatedAt: timestamp,
+  }
+}
+
+// Colección de productos
 products: {
   productId: {
     name: string,
@@ -198,8 +272,36 @@ service firebase.storage {
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
+    // Helper function para verificar si el usuario está autenticado
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    // Helper function para verificar el rol del usuario
+    function getUserRole() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role;
+    }
+    
+    // Helper function para verificar si es admin
+    function isAdmin() {
+      return isAuthenticated() && getUserRole() == 'admin';
+    }
+    
+    // Helper function para verificar si es manager o admin
+    function isManagerOrAdmin() {
+      return isAuthenticated() && (getUserRole() == 'admin' || getUserRole() == 'manager');
+    }
+    
+    // Reglas para usuarios (solo admins pueden escribir)
+    match /users/{userId} {
+      allow read: if isAuthenticated();
+      allow write: if isAdmin();
+    }
+    
+    // Reglas para productos (managers y admins pueden escribir)
     match /products/{productId} {
-      allow read, write: if request.auth != null;
+      allow read: if isAuthenticated();
+      allow write: if isManagerOrAdmin();
     }
   }
 }

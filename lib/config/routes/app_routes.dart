@@ -11,6 +11,7 @@ import 'route_guard.dart';
 // Authentication pages
 import '../../features/authentication/presentation/pages/login_page.dart';
 import '../../features/authentication/presentation/pages/forgot_password_page.dart';
+import '../../features/authentication/presentation/pages/admin/admin_users_page.dart';
 
 // Main layout
 import '../../features/home/presentation/pages/main_layout.dart';
@@ -35,6 +36,7 @@ class AppRoutes {
   static const String reports = '/reports';
   static const String profile = '/profile';
   static const String settings = '/settings';
+  static const String adminUsers = '/admin/users';
 
   /// Main GoRouter configuration
   static final GoRouter router = GoRouter(
@@ -184,6 +186,18 @@ class AppRoutes {
               context: context,
               state: state,
               child: const SettingsPage(),
+            ),
+      ),
+
+      // Admin routes (protected, only for admins)
+      GoRoute(
+        path: adminUsers,
+        name: 'admin-users',
+        pageBuilder:
+            (context, state) => buildPageWithTransition(
+              context: context,
+              state: state,
+              child: const AdminUsersPage(),
             ),
       ),
     ],

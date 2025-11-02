@@ -473,6 +473,48 @@ class FirebaseAuthDataSource {
     }
   }
 
+  /// Elimina un usuario del sistema (solo para administradores)
+  ///
+  /// NOTA: Firebase Admin SDK es necesario para eliminar usuarios desde el servidor.
+  /// Esta implementación solo marca al usuario como inactivo en Firestore.
+  /// Para eliminación completa, usar Cloud Functions con Admin SDK.
+  Future<void> deleteUser({required String userId}) async {
+    try {
+      // Verificar que el usuario actual es admin
+      final hasAdminPermission = await hasPermission(UserRole.admin);
+      if (!hasAdminPermission) {
+        throw const InsufficientPermissionsException();
+      }
+
+      // No se puede eliminar el propio usuario administrador
+      final currentUser = await getCurrentUser();
+      if (currentUser?.uid == userId) {
+        throw const UnknownAuthException(
+          message: 'No puedes eliminar tu propia cuenta de administrador',
+        );
+      }
+
+      // Marcar como inactivo en Firestore
+      await _firestore.collection('users').doc(userId).update({
+        'status': UserStatus.inactive.value,
+        'deletedAt': FieldValue.serverTimestamp(),
+        'deletedBy': currentUser?.uid,
+        'updatedAt': FieldValue.serverTimestamp(),
+      });
+
+      // TODO: Implementar Cloud Function para eliminar del Authentication
+      // usando Firebase Admin SDK
+    } on FirebaseException catch (e) {
+      if (e.code == 'not-found') {
+        throw const UserNotFoundException();
+      }
+      throw ServerException(message: e.message ?? 'Firestore error');
+    } catch (e) {
+      if (e is AuthException) rethrow;
+      throw AuthExceptionMapper.fromException(e);
+    }
+  }
+
   /// Métodos privados para gestión de documentos de Firestore
 
   /// Crea un documento de usuario en Firestore

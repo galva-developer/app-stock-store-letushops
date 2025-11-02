@@ -43,3 +43,18 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# Security - Credentials and sensitive data
+*.env
+.env.local
+.env.*.local
+credentials.json
+service-account.json
+secrets/
+**/credentials/
+**/secrets/
+**/.credentials/
+firebase-adminsdk*.json
+google-services-*.json
+!android/app/google-services.json
+!ios/Runner/GoogleService-Info.plist

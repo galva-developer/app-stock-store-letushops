@@ -10,6 +10,7 @@ Este documento detalla la implementación técnica completa del proyecto Stock L
 
 ### [FASE 1: CONFIGURACIÓN BASE](#fase-1-configuración-base)
 ### [FASE 2: AUTENTICACIÓN](#fase-2-autenticación)
+### [FASE 2.1: SISTEMA DE ROLES Y ADMINISTRACIÓN](#fase-21-sistema-de-roles-y-administración)
 ### [FASE 3: NÚCLEO DE LA APLICACIÓN](#fase-3-núcleo-de-la-aplicación)
 ### [FASE 4: GESTIÓN DE PRODUCTOS](#fase-4-gestión-de-productos)
 ### [FASE 5: MÓDULO DE CÁMARA E IA](#fase-5-módulo-de-cámara-e-ia)
@@ -149,6 +150,89 @@ Este documento detalla la implementación técnica completa del proyecto Stock L
 - [x] **2.7.1** Crear `lib/config/routes/route_guard.dart`
 - [x] **2.7.2** Implementar redirección automática según estado de autenticación
 - [x] **2.7.3** Configurar persistencia de sesión
+
+---
+
+## 👥 FASE 2.1: SISTEMA DE ROLES Y ADMINISTRACIÓN
+**Objetivo**: Implementar jerarquía de usuarios y panel de administración
+
+### 2.1.1 Configuración de Roles en Entidades
+- [x] **2.1.1.1** Verificar enum `UserRole` en `lib/features/authentication/domain/entities/auth_user.dart`
+  - Admin: Acceso completo al sistema
+  - Manager: Gestión de inventario y reportes
+  - Employee: Operaciones básicas
+- [x] **2.1.1.2** Verificar enum `UserStatus` en `lib/features/authentication/domain/entities/auth_user.dart`
+  - Active: Usuario activo
+  - Suspended: Usuario suspendido temporalmente
+  - Inactive: Usuario desactivado/eliminado
+
+### 2.1.2 Casos de Uso de Administración
+- [x] **2.1.2.1** Crear `lib/features/authentication/domain/usecases/admin/list_all_users_usecase.dart`
+- [x] **2.1.2.2** Crear `lib/features/authentication/domain/usecases/admin/update_user_role_usecase.dart`
+- [x] **2.1.2.3** Crear `lib/features/authentication/domain/usecases/admin/update_user_status_usecase.dart`
+- [x] **2.1.2.4** Crear `lib/features/authentication/domain/usecases/admin/delete_user_usecase.dart`
+
+### 2.1.3 Implementación en Capa de Datos
+- [x] **2.1.3.1** Agregar método `getAllUsers()` en `firebase_auth_datasource.dart`
+- [x] **2.1.3.2** Agregar método `deleteUser()` en `firebase_auth_datasource.dart`
+- [x] **2.1.3.3** Verificar métodos `updateUserRole()` y `updateUserStatus()` existentes
+- [x] **2.1.3.4** Agregar método `deleteUser()` en `auth_repository.dart` (interfaz)
+- [x] **2.1.3.5** Implementar `deleteUser()` en `auth_repository_impl.dart`
+
+### 2.1.4 Provider de Administración
+- [x] **2.1.4.1** Crear `lib/features/authentication/presentation/providers/admin_users_provider.dart`
+- [x] **2.1.4.2** Implementar estados: initial, loading, loaded, error, updating, deleting
+- [x] **2.1.4.3** Implementar métodos: loadUsers, updateUserRole, updateUserStatus, deleteUser
+- [x] **2.1.4.4** Implementar filtros: búsqueda por texto, filtro por rol, filtro por estado
+- [x] **2.1.4.5** Implementar estadísticas de usuarios
+
+### 2.1.5 Widgets de Administración
+- [x] **2.1.5.1** Crear `lib/features/authentication/presentation/widgets/admin/user_status_badge.dart`
+- [x] **2.1.5.2** Crear `lib/features/authentication/presentation/widgets/admin/user_role_selector.dart`
+- [x] **2.1.5.3** Crear `lib/features/authentication/presentation/widgets/admin/user_list_item.dart`
+
+### 2.1.6 Pantalla de Administración
+- [x] **2.1.6.1** Crear `lib/features/authentication/presentation/pages/admin/admin_users_page.dart`
+- [x] **2.1.6.2** Implementar panel de estadísticas de usuarios
+- [x] **2.1.6.3** Implementar barra de búsqueda
+- [x] **2.1.6.4** Implementar lista de usuarios con UserListItem
+- [x] **2.1.6.5** Implementar diálogo de filtros
+- [x] **2.1.6.6** Implementar pull-to-refresh
+
+### 2.1.7 Configuración de Rutas y Login
+- [x] **2.1.7.1** Agregar ruta `/admin/users` en `app_routes.dart`
+- [x] **2.1.7.2** Modificar `login_page.dart` para redirigir a panel admin basándose en el rol de Firestore
+- [x] **2.1.7.3** Configurar AdminUsersProvider en `main.dart` con MultiProvider
+
+### 2.1.8 Configuración de Firestore
+- [x] **2.1.8.1** Actualizar estructura de colección `users` en Firestore con campos:
+  ```javascript
+  {
+    email: string,
+    displayName: string,
+    photoURL: string,
+    emailVerified: boolean,
+    role: string,              // 'admin', 'manager', 'employee'
+    status: string,            // 'active', 'suspended', 'inactive'
+    creationTime: timestamp,
+    lastSignInTime: timestamp,
+    updatedAt: timestamp
+  }
+  ```
+- [x] **2.1.8.2** Actualizar Security Rules de Firestore para permisos basados en roles
+- [ ] **2.1.8.3** Crear índice compuesto en Firestore para búsquedas eficientes
+
+### 2.1.9 Credenciales de Administrador
+- [x] **2.1.9.1** Documentar configuración de admin en README.md (sin credenciales hardcodeadas)
+- [x] **2.1.9.2** Documentar jerarquía de roles en README.md
+- [ ] **2.1.9.3** Crear script de inicialización para crear usuario admin en Firebase
+- [x] **2.1.9.4** Implementar redirección basada en rol de Firestore (sin verificar contraseñas en código)
+
+### 2.1.10 Testing del Sistema de Roles
+- [ ] **2.1.10.1** Crear tests unitarios para casos de uso de admin
+- [ ] **2.1.10.2** Crear tests de integración para AdminUsersProvider
+- [ ] **2.1.10.3** Crear tests de widget para AdminUsersPage
+- [ ] **2.1.10.4** Verificar flujo completo: login admin → panel usuarios → cambio de rol
 
 ---
 

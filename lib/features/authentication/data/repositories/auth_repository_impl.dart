@@ -530,6 +530,31 @@ class AuthRepositoryImpl implements AuthRepository {
     }
   }
 
+  /// Elimina un usuario del sistema (solo para administradores)
+  ///
+  /// Esta operación marca al usuario como inactivo en Firestore.
+  ///
+  /// Throws:
+  /// - [InsufficientPermissionsException] si no tiene permisos de admin
+  /// - [UserNotFoundException] si el usuario no existe
+  /// - [NetworkException] si hay problemas de conectividad
+  /// - [AuthException] para otros errores
+  @override
+  Future<void> deleteUser({required String userId}) async {
+    try {
+      // Validaciones básicas
+      if (userId.trim().isEmpty) {
+        throw const RequiredFieldException(fieldName: 'userId');
+      }
+
+      return await _firebaseAuthDataSource.deleteUser(userId: userId);
+    } on AuthException {
+      rethrow;
+    } catch (e) {
+      throw AuthExceptionMapper.fromException(e);
+    }
+  }
+
   /// Métodos auxiliares privados
 
   /// Valida el formato de un email usando expresión regular
