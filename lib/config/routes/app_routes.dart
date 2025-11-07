@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 
 // Core imports
 import '../../features/authentication/presentation/providers/auth_provider.dart';
+import '../../features/authentication/presentation/providers/auth_state.dart';
 
 // Route guard
 import 'route_guard.dart';
@@ -419,29 +420,71 @@ class ErrorPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Obtener el estado de autenticación
+    final authProvider = context.watch<AuthProvider>();
+    final isAuthenticated = authProvider.state is AuthAuthenticated;
+
     return Scaffold(
       appBar: AppBar(title: const Text('Error')),
       body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Icon(Icons.error, size: 64, color: Colors.red),
-            const SizedBox(height: 16),
-            const Text('Ups! Algo salió mal'),
-            if (error != null) ...[
+        child: Padding(
+          padding: const EdgeInsets.all(24.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Icon(Icons.error, size: 64, color: Colors.red),
+              const SizedBox(height: 16),
+              const Text(
+                'Ups! Algo salió mal',
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              ),
               const SizedBox(height: 8),
               Text(
-                error.toString(),
+                'GoException: no routes for location: /homeasdasd',
                 textAlign: TextAlign.center,
-                style: Theme.of(context).textTheme.bodySmall,
+                style: Theme.of(
+                  context,
+                ).textTheme.bodyMedium?.copyWith(color: Colors.grey[600]),
+              ),
+              if (error != null) ...[
+                const SizedBox(height: 16),
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: Colors.red.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(color: Colors.red.withOpacity(0.3)),
+                  ),
+                  child: Text(
+                    error.toString(),
+                    textAlign: TextAlign.center,
+                    style: Theme.of(
+                      context,
+                    ).textTheme.bodySmall?.copyWith(color: Colors.red[800]),
+                  ),
+                ),
+              ],
+              const SizedBox(height: 24),
+              ElevatedButton.icon(
+                onPressed: () {
+                  // Redirigir según el estado de autenticación
+                  if (isAuthenticated) {
+                    context.go(AppRoutes.home);
+                  } else {
+                    context.go(AppRoutes.login);
+                  }
+                },
+                icon: const Icon(Icons.home),
+                label: Text(isAuthenticated ? 'Ir al inicio' : 'Ir al login'),
+                style: ElevatedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 24,
+                    vertical: 12,
+                  ),
+                ),
               ),
             ],
-            const SizedBox(height: 16),
-            ElevatedButton(
-              onPressed: () => context.go(AppRoutes.home),
-              child: const Text('Volver al inicio'),
-            ),
-          ],
+          ),
         ),
       ),
     );

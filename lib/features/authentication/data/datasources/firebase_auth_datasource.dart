@@ -87,6 +87,8 @@ class FirebaseAuthDataSource {
     required String password,
   }) async {
     try {
+      print('🔐 Iniciando sesión para: $email');
+
       final credential = await _firebaseAuth.signInWithEmailAndPassword(
         email: email.trim(),
         password: password,
@@ -98,24 +100,46 @@ class FirebaseAuthDataSource {
         );
       }
 
+      print('✅ Autenticación exitosa. UID: ${credential.user!.uid}');
+
       var userModel = UserModel.fromFirebaseUser(credential.user!);
 
-      // Actualizar datos extendidos en Firestore
-      await _updateUserDocument(userModel);
-
-      // Obtener datos completos incluyendo rol y estado
+      // Obtener datos completos de Firestore PRIMERO
+      print('📄 Obteniendo datos de Firestore...');
       final userDoc =
           await _firestore.collection('users').doc(credential.user!.uid).get();
 
       if (userDoc.exists) {
+        print('✅ Documento encontrado en Firestore');
+        // Si existe, combinar con datos de Firestore (rol, estado, etc.)
         final firestoreData = userDoc.data() ?? {};
+        print(
+          '📋 Datos de Firestore: role=${firestoreData['role']}, status=${firestoreData['status']}',
+        );
+
         userModel = userModel.mergeWithFirestoreData(firestoreData);
+        print(
+          '👤 Usuario final: role=${userModel.role}, status=${userModel.status}',
+        );
+
+        // Actualizar solo campos de autenticación (no el rol)
+        await _firestore.collection('users').doc(credential.user!.uid).update({
+          'lastSignInTime': FieldValue.serverTimestamp(),
+          'emailVerified': credential.user!.emailVerified,
+        });
+      } else {
+        print('⚠️ Documento NO encontrado en Firestore. Creando nuevo...');
+        // Si no existe, crear documento nuevo con rol por defecto
+        await _createUserDocument(userModel);
+        print('✅ Documento creado con rol: ${userModel.role}');
       }
 
       return userModel;
     } on FirebaseAuthException catch (e) {
+      print('❌ Error de autenticación: ${e.code} - ${e.message}');
       throw AuthExceptionMapper.fromFirebaseAuthCode(e.code, e.message);
     } catch (e) {
+      print('❌ Error inesperado: $e');
       throw AuthExceptionMapper.fromException(e);
     }
   }

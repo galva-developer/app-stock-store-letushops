@@ -29,6 +29,7 @@ class RouteGuard {
     '/reports',
     '/profile',
     '/settings',
+    '/admin',
   ];
 
   /// Lista de rutas que solo deben ser accesibles cuando NO está autenticado

@@ -220,19 +220,12 @@ Este documento detalla la implementación técnica completa del proyecto Stock L
   }
   ```
 - [x] **2.1.8.2** Actualizar Security Rules de Firestore para permisos basados en roles
-- [ ] **2.1.8.3** Crear índice compuesto en Firestore para búsquedas eficientes
 
 ### 2.1.9 Credenciales de Administrador
 - [x] **2.1.9.1** Documentar configuración de admin en README.md (sin credenciales hardcodeadas)
 - [x] **2.1.9.2** Documentar jerarquía de roles en README.md
-- [ ] **2.1.9.3** Crear script de inicialización para crear usuario admin en Firebase
+- [x] **2.1.9.3** Crear script de inicialización para crear usuario admin en Firebase
 - [x] **2.1.9.4** Implementar redirección basada en rol de Firestore (sin verificar contraseñas en código)
-
-### 2.1.10 Testing del Sistema de Roles
-- [ ] **2.1.10.1** Crear tests unitarios para casos de uso de admin
-- [ ] **2.1.10.2** Crear tests de integración para AdminUsersProvider
-- [ ] **2.1.10.3** Crear tests de widget para AdminUsersPage
-- [ ] **2.1.10.4** Verificar flujo completo: login admin → panel usuarios → cambio de rol
 
 ---
 

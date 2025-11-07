@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import '../providers/auth_provider.dart';
 import '../providers/auth_state.dart';
@@ -348,7 +349,7 @@ class _LoginPageState extends State<LoginPage> {
       alignment: Alignment.centerRight,
       child: TextButton(
         onPressed: () {
-          Navigator.pushNamed(context, '/forgot-password');
+          context.push('/forgot-password');
         },
         child: const Text(
           '¿Olvidaste tu contraseña?',
@@ -404,20 +405,30 @@ class _LoginPageState extends State<LoginPage> {
     final email = _emailController.text.trim();
     final password = _passwordController.text;
 
+    print('🔑 Intentando login con: $email');
+
     final success = await authProvider.login(email, password);
 
     if (success && mounted) {
       // Obtener el usuario actual para verificar su rol
       final currentUser = authProvider.currentUser;
 
+      print('👤 Usuario cargado: ${currentUser?.email}');
+      print('🎭 Rol del usuario: ${currentUser?.role}');
+      print('✅ Es admin: ${currentUser?.isAdmin}');
+
       // Redirigir según el rol del usuario
       if (currentUser != null && currentUser.isAdmin) {
+        print('🔴 Redirigiendo a panel de administración...');
         // Si es administrador, redirigir al panel de administración
-        Navigator.pushReplacementNamed(context, '/admin/users');
+        context.go('/admin/users');
       } else {
+        print('🏠 Redirigiendo a home...');
         // Navegación normal al home para managers y empleados
-        Navigator.pushReplacementNamed(context, '/home');
+        context.go('/home');
       }
+    } else {
+      print('❌ Login fallido');
     }
   }
 
