@@ -4,6 +4,7 @@ import '../../../domain/entities/auth_user.dart';
 import '../../providers/admin_users_provider.dart';
 import '../../providers/auth_provider.dart';
 import '../../widgets/admin/user_list_item.dart';
+import '../../widgets/admin/register_user_dialog.dart';
 
 /// Pantalla de administración de usuarios
 ///
@@ -115,6 +116,12 @@ class _AdminUsersPageState extends State<AdminUsersPage> {
             ],
           );
         },
+      ),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () => _showRegisterDialog(context),
+        backgroundColor: const Color(0xFFD32F2F),
+        icon: const Icon(Icons.person_add),
+        label: const Text('Nuevo Usuario'),
       ),
     );
   }
@@ -456,6 +463,30 @@ class _AdminUsersPageState extends State<AdminUsersPage> {
                 child: const Text('Aplicar'),
               ),
             ],
+          ),
+    );
+  }
+
+  /// Muestra el diálogo para registrar un nuevo usuario
+  void _showRegisterDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder:
+          (context) => RegisterUserDialog(
+            onRegister: ({
+              required email,
+              required password,
+              required displayName,
+              required role,
+            }) async {
+              final provider = context.read<AdminUsersProvider>();
+              return await provider.registerUser(
+                email: email,
+                password: password,
+                displayName: displayName,
+                role: role,
+              );
+            },
           ),
     );
   }

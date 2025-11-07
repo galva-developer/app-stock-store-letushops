@@ -1,0 +1,93 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Función auxiliar para verificar si el usuario está autenticado
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    // Función auxiliar para obtener datos del usuario actual
+    function getUserData() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data;
+    }
+    
+    // Función auxiliar para verificar si el usuario es administrador
+    function isAdmin() {
+      return isAuthenticated() && getUserData().role == 'admin';
+    }
+    
+    // Función auxiliar para verificar si el usuario es manager
+    function isManager() {
+      return isAuthenticated() && getUserData().role == 'manager';
+    }
+    
+    // Función auxiliar para verificar si el usuario está activo
+    function isActive() {
+      return isAuthenticated() && getUserData().status == 'active';
+    }
+    
+    // Reglas para la colección de usuarios
+    match /users/{userId} {
+      // Lectura:
+      // - Los usuarios pueden leer su propio documento
+      // - Los administradores pueden leer todos los documentos
+      allow read: if isAuthenticated() && 
+                     (request.auth.uid == userId || isAdmin());
+      
+      // Creación:
+      // - Durante el registro inicial (cuando el documento no existe aún)
+      // - Los administradores pueden crear cualquier usuario
+      allow create: if (isAuthenticated() && request.auth.uid == userId) ||
+                       isAdmin();
+      
+      // Actualización:
+      // - Los usuarios pueden actualizar sus propios datos básicos
+      // - Los administradores pueden actualizar cualquier usuario
+      // - No se puede cambiar el rol a menos que seas admin
+      allow update: if isAuthenticated() && (
+                       (request.auth.uid == userId && 
+                        request.resource.data.role == resource.data.role) ||
+                       isAdmin()
+                     );
+      
+      // Eliminación:
+      // - Solo los administradores pueden eliminar usuarios
+      allow delete: if isAdmin();
+    }
+    
+    // Reglas para otras colecciones (productos, inventario, etc.)
+    match /products/{productId} {
+      // Lectura: Todos los usuarios autenticados y activos
+      allow read: if isAuthenticated() && isActive();
+      
+      // Escritura: Administradores y managers
+      allow write: if isAuthenticated() && isActive() && 
+                      (isAdmin() || isManager());
+    }
+    
+    match /inventory/{inventoryId} {
+      // Lectura: Todos los usuarios autenticados y activos
+      allow read: if isAuthenticated() && isActive();
+      
+      // Escritura: Administradores y managers
+      allow write: if isAuthenticated() && isActive() && 
+                      (isAdmin() || isManager());
+    }
+    
+    match /reports/{reportId} {
+      // Lectura: Todos los usuarios autenticados y activos
+      allow read: if isAuthenticated() && isActive();
+      
+      // Escritura: Administradores y managers
+      allow write: if isAuthenticated() && isActive() && 
+                      (isAdmin() || isManager());
+    }
+    
+    // Por defecto, denegar todo lo demás
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

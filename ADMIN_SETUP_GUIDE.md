@@ -107,14 +107,34 @@ Luego en Firestore, configura el documento con `role: "employee"`
 
 1. Inicia sesión como administrador
 2. En el panel de administración, podrás ver todos los usuarios
-3. Para crear nuevos usuarios, primero créalos en Firebase Authentication
-4. Luego, usa el panel para cambiar su rol según corresponda
+3. Haz clic en el botón **"Nuevo Usuario"** para crear empleados o gerentes
+4. Completa el formulario con los datos del nuevo usuario
 
 ---
 
 ## 🔒 Security Rules de Firestore
 
-Asegúrate de tener las siguientes reglas de seguridad configuradas en Firestore:
+**⚠️ IMPORTANTE:** Para que el sistema de registro de usuarios funcione, debes configurar las reglas de seguridad de Firestore.
+
+### Configuración Rápida
+
+📖 **Consulta la guía completa:** [FIRESTORE_RULES_SETUP.md](FIRESTORE_RULES_SETUP.md)
+
+**Pasos:**
+1. Ve a [Firebase Console](https://console.firebase.google.com/)
+2. Firestore Database → **Reglas** (Rules)
+3. Copia el contenido del archivo `firestore.rules` del proyecto
+4. Pégalo en el editor de reglas
+5. Haz clic en **Publicar** (Publish)
+
+**Sin estas reglas, verás este error al registrar usuarios:**
+```
+❌ [cloud_firestore/permission-denied] Missing or insufficient permissions.
+```
+
+### Reglas de Seguridad Completas
+
+Asegúrate de tener configuradas las siguientes reglas:
 
 ```javascript
 rules_version = '2';

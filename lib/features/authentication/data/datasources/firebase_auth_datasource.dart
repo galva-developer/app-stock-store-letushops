@@ -539,6 +539,101 @@ class FirebaseAuthDataSource {
     }
   }
 
+  /// Registra un nuevo usuario en el sistema (solo para administradores)
+  ///
+  /// Crea un usuario completo con autenticación y perfil en Firestore.
+  /// Solo los administradores pueden ejecutar esta operación.
+  ///
+  /// El proceso incluye:
+  /// 1. Verificar permisos de admin del usuario actual
+  /// 2. Crear cuenta en Firebase Authentication
+  /// 3. Actualizar display name del usuario
+  /// 4. Crear documento en Firestore con rol asignado
+  /// 5. Enviar email de verificación
+  ///
+  /// Parameters:
+  /// - [email] Email único del nuevo usuario
+  /// - [password] Contraseña temporal (mínimo 8 caracteres)
+  /// - [displayName] Nombre completo del usuario
+  /// - [role] Rol asignado (employee o manager)
+  ///
+  /// Returns: UserModel del usuario creado
+  ///
+  /// Throws:
+  /// - [InsufficientPermissionsException] si no es admin
+  /// - [EmailAlreadyInUseException] si el email ya existe
+  /// - [WeakPasswordException] si la contraseña es débil
+  /// - [AuthException] para otros errores
+  Future<UserModel> registerUser({
+    required String email,
+    required String password,
+    required String displayName,
+    required UserRole role,
+  }) async {
+    try {
+      // Verificar que el usuario actual es admin
+      final hasAdminPermission = await hasPermission(UserRole.admin);
+      if (!hasAdminPermission) {
+        throw const InsufficientPermissionsException();
+      }
+
+      print('📝 Registrando nuevo usuario: $email con rol: ${role.value}');
+
+      // Crear usuario en Firebase Authentication
+      final userCredential = await _firebaseAuth.createUserWithEmailAndPassword(
+        email: email.trim(),
+        password: password,
+      );
+
+      if (userCredential.user == null) {
+        throw const UnknownAuthException(
+          message: 'User creation successful but user is null',
+        );
+      }
+
+      final firebaseUser = userCredential.user!;
+
+      // Actualizar display name
+      await firebaseUser.updateDisplayName(displayName.trim());
+      await firebaseUser.reload();
+
+      print('✅ Usuario creado en Authentication. UID: ${firebaseUser.uid}');
+
+      // Crear documento en Firestore con el rol especificado
+      final userModel = UserModel(
+        uid: firebaseUser.uid,
+        email: firebaseUser.email ?? email,
+        displayName: displayName.trim(),
+        photoURL: null,
+        emailVerified: false,
+        role: role,
+        status: UserStatus.active,
+        creationTime: DateTime.now(),
+        lastSignInTime: DateTime.now(),
+      );
+
+      await _firestore
+          .collection('users')
+          .doc(firebaseUser.uid)
+          .set(userModel.toFirestore());
+
+      print('✅ Documento creado en Firestore con rol: ${role.value}');
+
+      // Enviar email de verificación
+      await firebaseUser.sendEmailVerification();
+      print('📧 Email de verificación enviado a: $email');
+
+      return userModel;
+    } on FirebaseAuthException catch (e) {
+      print('❌ Error de autenticación: ${e.code} - ${e.message}');
+      throw AuthExceptionMapper.fromFirebaseAuthCode(e.code, e.message);
+    } catch (e) {
+      print('❌ Error inesperado: $e');
+      if (e is AuthException) rethrow;
+      throw AuthExceptionMapper.fromException(e);
+    }
+  }
+
   /// Métodos privados para gestión de documentos de Firestore
 
   /// Crea un documento de usuario en Firestore

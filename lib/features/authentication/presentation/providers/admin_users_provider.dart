@@ -4,6 +4,7 @@ import '../../domain/usecases/admin/list_all_users_usecase.dart';
 import '../../domain/usecases/admin/update_user_role_usecase.dart';
 import '../../domain/usecases/admin/update_user_status_usecase.dart';
 import '../../domain/usecases/admin/delete_user_usecase.dart';
+import '../../domain/usecases/admin/register_user_usecase.dart';
 import '../../domain/exceptions/auth_exceptions.dart';
 
 /// Estados del provider de administración de usuarios
@@ -13,6 +14,7 @@ enum AdminUsersState { initial, loading, loaded, error, updating, deleting }
 ///
 /// Este provider maneja todas las operaciones de administración de usuarios:
 /// - Listar usuarios
+/// - Registrar nuevos usuarios
 /// - Actualizar roles
 /// - Actualizar estados
 /// - Eliminar usuarios
@@ -22,16 +24,19 @@ class AdminUsersProvider extends ChangeNotifier {
   final UpdateUserRoleUseCase _updateUserRoleUseCase;
   final UpdateUserStatusUseCase _updateUserStatusUseCase;
   final DeleteUserUseCase _deleteUserUseCase;
+  final RegisterUserUseCase _registerUserUseCase;
 
   AdminUsersProvider({
     required ListAllUsersUseCase listAllUsersUseCase,
     required UpdateUserRoleUseCase updateUserRoleUseCase,
     required UpdateUserStatusUseCase updateUserStatusUseCase,
     required DeleteUserUseCase deleteUserUseCase,
+    required RegisterUserUseCase registerUserUseCase,
   }) : _listAllUsersUseCase = listAllUsersUseCase,
        _updateUserRoleUseCase = updateUserRoleUseCase,
        _updateUserStatusUseCase = updateUserStatusUseCase,
-       _deleteUserUseCase = deleteUserUseCase;
+       _deleteUserUseCase = deleteUserUseCase,
+       _registerUserUseCase = registerUserUseCase;
 
   // Estado del provider
   AdminUsersState _state = AdminUsersState.initial;
@@ -278,5 +283,56 @@ class AdminUsersProvider extends ChangeNotifier {
       _state = AdminUsersState.loaded;
     }
     notifyListeners();
+  }
+
+  /// Registra un nuevo usuario en el sistema
+  ///
+  /// Solo los administradores pueden ejecutar esta operación.
+  /// El usuario se crea con estado activo y recibe un email de verificación.
+  ///
+  /// Parameters:
+  /// - [email] Email único del nuevo usuario
+  /// - [password] Contraseña temporal (mínimo 8 caracteres)
+  /// - [displayName] Nombre completo del usuario
+  /// - [role] Rol asignado (employee o manager)
+  ///
+  /// Returns: true si se registró exitosamente, false en caso de error
+  Future<bool> registerUser({
+    required String email,
+    required String password,
+    required String displayName,
+    required UserRole role,
+  }) async {
+    try {
+      _state = AdminUsersState.updating;
+      _errorMessage = null;
+      notifyListeners();
+
+      // Ejecutar caso de uso
+      await _registerUserUseCase(
+        email: email,
+        password: password,
+        displayName: displayName,
+        role: role,
+      );
+
+      // Recargar lista de usuarios
+      await loadUsers();
+
+      _state = AdminUsersState.loaded;
+      notifyListeners();
+
+      return true;
+    } on AuthException catch (e) {
+      _state = AdminUsersState.error;
+      _errorMessage = e.userMessage;
+      notifyListeners();
+      return false;
+    } catch (e) {
+      _state = AdminUsersState.error;
+      _errorMessage = 'Error inesperado al registrar usuario';
+      notifyListeners();
+      return false;
+    }
   }
 }

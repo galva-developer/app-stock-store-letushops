@@ -159,12 +159,15 @@ La aplicación cuenta con un **sistema de roles jerárquico** con tres niveles d
 
 > **🎯 ACCESO DE ADMINISTRADOR:** 
 > Al iniciar sesión con un usuario que tenga `role: "admin"` en Firestore, serás redirigido automáticamente al **Panel de Administración de Usuarios** donde podrás:
-> - Ver todos los usuarios registrados
-> - Cambiar roles de usuarios (Employee ↔ Manager ↔ Admin)
-> - Cambiar estados (Activo, Suspendido, Inactivo)
-> - Eliminar usuarios
-> - Filtrar y buscar usuarios
-> - Ver estadísticas de usuarios
+> - ➕ **Registrar nuevos usuarios** (Empleados y Gerentes)
+> - 👀 Ver todos los usuarios registrados
+> - 🔄 Cambiar roles de usuarios (Employee ↔ Manager ↔ Admin)
+> - 🎭 Cambiar estados (Activo, Suspendido, Inactivo)
+> - 🗑️ Eliminar usuarios
+> - 🔍 Filtrar y buscar usuarios
+> - 📊 Ver estadísticas en tiempo real
+>
+> 📖 **Consulta la [Guía de Registro de Usuarios](USER_REGISTRATION_GUIDE.md)** para instrucciones detalladas
 
 ### Credenciales de Prueba Adicionales
 

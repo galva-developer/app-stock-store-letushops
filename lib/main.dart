@@ -23,6 +23,7 @@ import 'features/authentication/domain/usecases/admin/list_all_users_usecase.dar
 import 'features/authentication/domain/usecases/admin/update_user_role_usecase.dart';
 import 'features/authentication/domain/usecases/admin/update_user_status_usecase.dart';
 import 'features/authentication/domain/usecases/admin/delete_user_usecase.dart';
+import 'features/authentication/domain/usecases/admin/register_user_usecase.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -63,6 +64,7 @@ class StockLetuShopsApp extends StatelessWidget {
               updateUserRoleUseCase: UpdateUserRoleUseCase(repository),
               updateUserStatusUseCase: UpdateUserStatusUseCase(repository),
               deleteUserUseCase: DeleteUserUseCase(repository),
+              registerUserUseCase: RegisterUserUseCase(repository),
             );
           },
         ),

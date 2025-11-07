@@ -555,6 +555,74 @@ class AuthRepositoryImpl implements AuthRepository {
     }
   }
 
+  /// Registra un nuevo usuario en el sistema (solo para administradores)
+  ///
+  /// Parameters:
+  /// - [email] Email del nuevo usuario (debe ser único)
+  /// - [password] Contraseña temporal (mínimo 8 caracteres)
+  /// - [displayName] Nombre completo del usuario
+  /// - [role] Rol asignado (employee o manager)
+  ///
+  /// Returns:
+  /// - [AuthUser] con los datos del usuario creado
+  ///
+  /// Throws:
+  /// - [InsufficientPermissionsException] si no tiene permisos de admin
+  /// - [EmailAlreadyInUseException] si el email ya está registrado
+  /// - [WeakPasswordException] si la contraseña no cumple requisitos
+  /// - [InvalidEmailFormatException] si el formato del email es inválido
+  /// - [NetworkException] si hay problemas de conectividad
+  /// - [AuthException] para otros errores
+  @override
+  Future<AuthUser> registerUser({
+    required String email,
+    required String password,
+    required String displayName,
+    required UserRole role,
+  }) async {
+    try {
+      // Validaciones básicas
+      if (email.trim().isEmpty) {
+        throw const RequiredFieldException(fieldName: 'email');
+      }
+      if (password.isEmpty) {
+        throw const RequiredFieldException(fieldName: 'password');
+      }
+      if (displayName.trim().isEmpty) {
+        throw const RequiredFieldException(fieldName: 'displayName');
+      }
+
+      // Validar formato de email
+      if (!_isValidEmail(email)) {
+        throw const InvalidEmailFormatException();
+      }
+
+      // Validar longitud de contraseña
+      if (password.length < 8) {
+        throw const WeakPasswordException();
+      }
+
+      // Validar que no se intente crear un admin
+      if (role == UserRole.admin) {
+        throw const UnknownAuthException(
+          message: 'Cannot create admin users through this method',
+          userMessage: 'No se pueden crear usuarios administradores',
+        );
+      }
+
+      return await _firebaseAuthDataSource.registerUser(
+        email: email,
+        password: password,
+        displayName: displayName,
+        role: role,
+      );
+    } on AuthException {
+      rethrow;
+    } catch (e) {
+      throw AuthExceptionMapper.fromException(e);
+    }
+  }
+
   /// Métodos auxiliares privados
 
   /// Valida el formato de un email usando expresión regular

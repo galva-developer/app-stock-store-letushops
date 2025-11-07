@@ -258,4 +258,38 @@ abstract class AuthRepository {
   /// - `NetworkException` si hay problemas de conectividad
   /// - `AuthException` para otros errores
   Future<void> deleteUser({required String userId});
+
+  /// Registra un nuevo usuario en el sistema (solo para administradores)
+  ///
+  /// Crea un nuevo usuario con el rol especificado. Solo los administradores
+  /// pueden utilizar esta función para crear cuentas de empleados o gerentes.
+  ///
+  /// El usuario creado:
+  /// - Se registra en Firebase Authentication
+  /// - Se crea su documento en Firestore con el rol asignado
+  /// - Recibe un email de verificación automáticamente
+  /// - Se establece con estado 'active' por defecto
+  ///
+  /// Parameters:
+  /// - `email`: Email del nuevo usuario (debe ser único)
+  /// - `password`: Contraseña temporal (mínimo 8 caracteres)
+  /// - `displayName`: Nombre completo del usuario
+  /// - `role`: Rol asignado (employee o manager)
+  ///
+  /// Returns:
+  /// - `AuthUser` con los datos del usuario creado
+  ///
+  /// Throws:
+  /// - `InsufficientPermissionsException` si no tiene permisos de admin
+  /// - `EmailAlreadyInUseException` si el email ya está registrado
+  /// - `WeakPasswordException` si la contraseña no cumple requisitos
+  /// - `InvalidEmailFormatException` si el formato del email es inválido
+  /// - `NetworkException` si hay problemas de conectividad
+  /// - `AuthException` para otros errores
+  Future<AuthUser> registerUser({
+    required String email,
+    required String password,
+    required String displayName,
+    required UserRole role,
+  });
 }
