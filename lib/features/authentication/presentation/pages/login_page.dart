@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import '../providers/auth_provider.dart';
 import '../providers/auth_state.dart';
+import '../../../../shared/providers/theme_provider.dart';
 
 /// Pantalla de inicio de sesión
 ///
@@ -44,7 +45,7 @@ class _LoginPageState extends State<LoginPage> {
     final isTablet = size.width > 600;
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: Consumer<AuthProvider>(
         builder: (context, authProvider, child) {
           // Mostrar mensajes de error/éxito
@@ -107,24 +108,39 @@ class _LoginPageState extends State<LoginPage> {
   Widget _buildHeader() {
     return Column(
       children: [
-        const SizedBox(height: 20),
+        // Botón de tema en la esquina superior derecha
+        Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            Consumer<ThemeProvider>(
+              builder: (context, themeProvider, _) {
+                return IconButton(
+                  icon: Icon(themeProvider.themeIcon),
+                  onPressed: () => themeProvider.toggleTheme(),
+                  tooltip: themeProvider.themeName,
+                  color: Theme.of(context).primaryColor,
+                );
+              },
+            ),
+          ],
+        ),
 
         // Logo de la aplicación
         Container(
-          width: 100,
-          height: 100,
+          width: 280,
+          height: 280,
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: Theme.of(context).colorScheme.surface,
             shape: BoxShape.circle,
             boxShadow: [
               BoxShadow(
-                color: const Color(0xFFD32F2F).withOpacity(0.2),
+                color: Theme.of(context).primaryColor.withOpacity(0.2),
                 blurRadius: 20,
                 offset: const Offset(0, 8),
               ),
             ],
           ),
-          padding: const EdgeInsets.all(20),
+          padding: const EdgeInsets.all(56),
           child: Image.asset(
             'assets/images/logo/logo-transparente.png',
             fit: BoxFit.contain,
@@ -134,12 +150,12 @@ class _LoginPageState extends State<LoginPage> {
         const SizedBox(height: 24),
 
         // Título
-        const Text(
+        Text(
           'Iniciar Sesión',
           style: TextStyle(
             fontSize: 32,
             fontWeight: FontWeight.bold,
-            color: Color(0xFF212121),
+            color: Theme.of(context).colorScheme.onSurface,
             letterSpacing: 0.5,
           ),
         ),
@@ -151,7 +167,7 @@ class _LoginPageState extends State<LoginPage> {
           'Accede a tu cuenta de Stock LetuShops',
           style: TextStyle(
             fontSize: 16,
-            color: Colors.grey[600],
+            color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
             fontWeight: FontWeight.w400,
           ),
           textAlign: TextAlign.center,
@@ -185,33 +201,46 @@ class _LoginPageState extends State<LoginPage> {
 
   /// Construye el campo de email
   Widget _buildEmailField(bool isLoading) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return TextFormField(
       controller: _emailController,
       enabled: !isLoading,
       keyboardType: TextInputType.emailAddress,
       textInputAction: TextInputAction.next,
+      style: TextStyle(color: Theme.of(context).colorScheme.onSurface),
       decoration: InputDecoration(
         labelText: 'Email',
         hintText: 'Ingresa tu email',
-        prefixIcon: const Icon(Icons.email_outlined, color: Color(0xFFD32F2F)),
+        prefixIcon: Icon(
+          Icons.email_outlined,
+          color: Theme.of(context).primaryColor,
+        ),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: Colors.grey[300]!),
+          borderSide: BorderSide(
+            color: isDark ? Colors.grey[700]! : Colors.grey[300]!,
+          ),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: Colors.grey[300]!),
+          borderSide: BorderSide(
+            color: isDark ? Colors.grey[700]! : Colors.grey[300]!,
+          ),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: Color(0xFFD32F2F), width: 2),
+          borderSide: BorderSide(
+            color: Theme.of(context).primaryColor,
+            width: 2,
+          ),
         ),
         errorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
           borderSide: const BorderSide(color: Colors.red, width: 2),
         ),
         filled: true,
-        fillColor: Colors.grey[50],
+        fillColor: isDark ? Colors.grey[850] : Colors.grey[50],
       ),
       validator: (value) {
         if (value == null || value.trim().isEmpty) {
@@ -229,20 +258,26 @@ class _LoginPageState extends State<LoginPage> {
 
   /// Construye el campo de contraseña
   Widget _buildPasswordField(bool isLoading) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return TextFormField(
       controller: _passwordController,
       enabled: !isLoading,
       obscureText: _obscurePassword,
       textInputAction: TextInputAction.done,
       onFieldSubmitted: (_) => _handleLogin(),
+      style: TextStyle(color: Theme.of(context).colorScheme.onSurface),
       decoration: InputDecoration(
         labelText: 'Contraseña',
         hintText: 'Ingresa tu contraseña',
-        prefixIcon: const Icon(Icons.lock_outlined, color: Color(0xFFD32F2F)),
+        prefixIcon: Icon(
+          Icons.lock_outlined,
+          color: Theme.of(context).primaryColor,
+        ),
         suffixIcon: IconButton(
           icon: Icon(
             _obscurePassword ? Icons.visibility_off : Icons.visibility,
-            color: Colors.grey[600],
+            color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
           ),
           onPressed: () {
             setState(() {
@@ -252,22 +287,29 @@ class _LoginPageState extends State<LoginPage> {
         ),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: Colors.grey[300]!),
+          borderSide: BorderSide(
+            color: isDark ? Colors.grey[700]! : Colors.grey[300]!,
+          ),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: Colors.grey[300]!),
+          borderSide: BorderSide(
+            color: isDark ? Colors.grey[700]! : Colors.grey[300]!,
+          ),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: Color(0xFFD32F2F), width: 2),
+          borderSide: BorderSide(
+            color: Theme.of(context).primaryColor,
+            width: 2,
+          ),
         ),
         errorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
           borderSide: const BorderSide(color: Colors.red, width: 2),
         ),
         filled: true,
-        fillColor: Colors.grey[50],
+        fillColor: isDark ? Colors.grey[850] : Colors.grey[50],
       ),
       validator: (value) {
         if (value == null || value.isEmpty) {
@@ -292,11 +334,14 @@ class _LoginPageState extends State<LoginPage> {
               _rememberMe = value ?? false;
             });
           },
-          activeColor: const Color(0xFFD32F2F),
+          activeColor: Theme.of(context).primaryColor,
         ),
-        const Text(
+        Text(
           'Recordarme',
-          style: TextStyle(fontSize: 14, color: Color(0xFF212121)),
+          style: TextStyle(
+            fontSize: 14,
+            color: Theme.of(context).colorScheme.onSurface,
+          ),
         ),
       ],
     );
@@ -309,7 +354,7 @@ class _LoginPageState extends State<LoginPage> {
       child: ElevatedButton(
         onPressed: authProvider.isLoading ? null : _handleLogin,
         style: ElevatedButton.styleFrom(
-          backgroundColor: const Color(0xFFD32F2F),
+          backgroundColor: const Color(0xFFD32F2F), // Rojo siempre
           foregroundColor: Colors.white,
           disabledBackgroundColor: Colors.grey[400],
           elevation: 2,
@@ -348,10 +393,10 @@ class _LoginPageState extends State<LoginPage> {
         onPressed: () {
           context.push('/forgot-password');
         },
-        child: const Text(
+        child: Text(
           '¿Olvidaste tu contraseña?',
           style: TextStyle(
-            color: Color(0xFFD32F2F),
+            color: Theme.of(context).primaryColor,
             fontSize: 14,
             fontWeight: FontWeight.w500,
           ),
@@ -366,7 +411,10 @@ class _LoginPageState extends State<LoginPage> {
       padding: const EdgeInsets.only(bottom: 20),
       child: Text(
         '© 2025 Stock LetuShops\nTodos los derechos reservados',
-        style: TextStyle(color: Colors.grey[500], fontSize: 12),
+        style: TextStyle(
+          color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
+          fontSize: 12,
+        ),
         textAlign: TextAlign.center,
       ),
     );
