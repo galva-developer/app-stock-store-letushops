@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import '../../../authentication/presentation/providers/auth_provider.dart';
+import '../../../../shared/providers/theme_provider.dart';
 
 /// Muestra un diálogo de confirmación antes de cerrar sesión
 void _showLogoutConfirmation(BuildContext context) {
@@ -65,6 +66,16 @@ class HomePage extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Inicio'),
         actions: [
+          // Botón para cambiar tema
+          Consumer<ThemeProvider>(
+            builder: (context, themeProvider, _) {
+              return IconButton(
+                icon: Icon(themeProvider.themeIcon),
+                onPressed: () => themeProvider.toggleTheme(),
+                tooltip: themeProvider.themeName,
+              );
+            },
+          ),
           IconButton(
             icon: const Icon(Icons.person),
             onPressed: () {

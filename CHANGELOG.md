@@ -5,6 +5,25 @@ Todos los cambios notables en este proyecto serán documentados en este archivo.
 El formato está basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.0.0/),
 y este proyecto adhiere a [Semantic Versioning](https://semver.org/lang/es/).
 
+## [Unreleased]
+
+### Añadido
+- **Modo oscuro completo con persistencia**
+  - `ThemeProvider` para gestionar el estado del tema
+  - Tres modos: Claro, Oscuro y Automático (Sistema)
+  - Persistencia del tema seleccionado usando SharedPreferences
+  - Widgets reutilizables para cambio de tema:
+    - `ThemeToggleButton` - Botón simple de toggle
+    - `ThemeSelector` - Selector con opciones de radio
+    - `ThemeDialog` - Diálogo completo para cambiar tema
+    - `ThemeSwitch` - Switch para alternar modo oscuro
+    - `ThemeSettingsTile` - ListTile para página de configuración
+  - Integración en páginas principales:
+    - HomePage con botón de tema en AppBar
+    - AdminUsersPage con botón de tema en AppBar
+  - Tema oscuro completo en `AppTheme.darkTheme`
+  - Documentación completa en `DARK_MODE_DOCUMENTATION.md`
+
 ### Eliminado
 - **Funcionalidad de auto-registro removida completamente**
 - `RegisterPage` eliminada de la aplicación

@@ -32,6 +32,7 @@ Una aplicación Flutter revolucionaria que optimiza la gestión de stock mediant
 - ✅ Interfaz intuitiva y responsiva
 - ✅ **Sistema de roles y permisos**
 - ✅ **Panel de administración de usuarios**
+- ✅ **Modo oscuro con persistencia**
 
 ## 🏗️ Arquitectura del Proyecto
 
@@ -334,6 +335,9 @@ service cloud.firestore {
 
 ### Versión 1.0 (Actual)
 - [x] Autenticación de usuarios
+- [x] Sistema de roles (Admin, Manager, Employee)
+- [x] Panel de administración de usuarios
+- [x] **Modo oscuro con persistencia**
 - [x] Cámara básica y captura
 - [x] Base de datos Firebase
 - [ ] Integración IA básica
@@ -344,12 +348,14 @@ service cloud.firestore {
 - [ ] Reportes detallados
 - [ ] Exportación de datos
 - [ ] Modo offline
+- [ ] Temas personalizados y paletas de colores
 
 ### Versión 2.0 (Futuro)
 - [ ] Análisis predictivo de stock
 - [ ] Integración con sistemas ERP
 - [ ] API para terceros
 - [ ] Dashboard web administrativo
+- [ ] Tema AMOLED para pantallas OLED
 
 ## 👥 Contribución
 

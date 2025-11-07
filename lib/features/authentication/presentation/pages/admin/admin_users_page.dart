@@ -5,6 +5,7 @@ import '../../providers/admin_users_provider.dart';
 import '../../providers/auth_provider.dart';
 import '../../widgets/admin/user_list_item.dart';
 import '../../widgets/admin/register_user_dialog.dart';
+import '../../../../../shared/providers/theme_provider.dart';
 
 /// Pantalla de administración de usuarios
 ///
@@ -51,6 +52,16 @@ class _AdminUsersPageState extends State<AdminUsersPage> {
         foregroundColor: Colors.white,
         elevation: 0,
         actions: [
+          // Botón para cambiar tema
+          Consumer<ThemeProvider>(
+            builder: (context, themeProvider, _) {
+              return IconButton(
+                icon: Icon(themeProvider.themeIcon),
+                onPressed: () => themeProvider.toggleTheme(),
+                tooltip: themeProvider.themeName,
+              );
+            },
+          ),
           IconButton(
             icon: const Icon(Icons.refresh),
             onPressed: () {

@@ -13,6 +13,7 @@ import 'core/services/session_persistence_service.dart';
 // Importaciones de providers
 import 'features/authentication/presentation/providers/auth_provider.dart';
 import 'features/authentication/presentation/providers/admin_users_provider.dart';
+import 'shared/providers/theme_provider.dart';
 
 // Importaciones de dependencias de auth
 import 'features/authentication/data/repositories/auth_repository_impl.dart';
@@ -48,6 +49,11 @@ class StockLetuShopsApp extends StatelessWidget {
 
     return MultiProvider(
       providers: [
+        // Theme Provider - Gestión del modo claro/oscuro
+        ChangeNotifierProvider<ThemeProvider>(
+          create: (context) => ThemeProvider(),
+        ),
+
         // Configuración del AuthProvider usando el factory
         ChangeNotifierProvider<AuthProvider>(
           create: (context) {
@@ -69,16 +75,16 @@ class StockLetuShopsApp extends StatelessWidget {
           },
         ),
       ],
-      child: Consumer<AuthProvider>(
-        builder: (context, authProvider, child) {
+      child: Consumer2<AuthProvider, ThemeProvider>(
+        builder: (context, authProvider, themeProvider, child) {
           return MaterialApp.router(
             title: 'Stock LetuShops',
             debugShowCheckedModeBanner: false,
 
-            // Configuración de tema
+            // Configuración de tema con modo oscuro
             theme: AppTheme.lightTheme,
-            // darkTheme: AppTheme.darkTheme, // Para futuras implementaciones
-            // themeMode: ThemeMode.system, // Respeta la configuración del sistema
+            darkTheme: AppTheme.darkTheme,
+            themeMode: themeProvider.themeMode,
 
             // Configuración de rutas con GoRouter
             routerConfig: AppRoutes.router,
