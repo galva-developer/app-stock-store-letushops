@@ -1,6 +1,56 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import '../../../authentication/presentation/providers/auth_provider.dart';
+
+/// Muestra un diálogo de confirmación antes de cerrar sesión
+void _showLogoutConfirmation(BuildContext context) {
+  showDialog(
+    context: context,
+    builder: (BuildContext dialogContext) {
+      return AlertDialog(
+        title: Row(
+          children: [
+            Icon(Icons.logout, color: Theme.of(context).primaryColor),
+            const SizedBox(width: 12),
+            const Text('Cerrar sesión'),
+          ],
+        ),
+        content: const Text(
+          '¿Estás seguro de que deseas cerrar sesión?',
+          style: TextStyle(fontSize: 16),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(dialogContext).pop(); // Cerrar el diálogo
+            },
+            child: const Text('Cancelar'),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              Navigator.of(dialogContext).pop(); // Cerrar el diálogo
+
+              // Ejecutar logout
+              final authProvider = context.read<AuthProvider>();
+              await authProvider.logout();
+
+              // Redirigir al login usando GoRouter
+              if (context.mounted) {
+                context.go('/login');
+              }
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFFD32F2F),
+              foregroundColor: Colors.white,
+            ),
+            child: const Text('Cerrar sesión'),
+          ),
+        ],
+      );
+    },
+  );
+}
 
 /// Página principal del dashboard/home de la aplicación
 class HomePage extends StatelessWidget {
@@ -23,9 +73,7 @@ class HomePage extends StatelessWidget {
           ),
           IconButton(
             icon: const Icon(Icons.logout),
-            onPressed: () async {
-              await authProvider.logout();
-            },
+            onPressed: () => _showLogoutConfirmation(context),
             tooltip: 'Cerrar sesión',
           ),
         ],

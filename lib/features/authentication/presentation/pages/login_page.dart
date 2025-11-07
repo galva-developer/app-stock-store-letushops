@@ -87,9 +87,6 @@ class _LoginPageState extends State<LoginPage> {
 
                       const SizedBox(height: 32),
 
-                      // Divider
-                      _buildDivider(),
-
                       // Spacer para empujar contenido hacia arriba
                       const Spacer(),
 
@@ -360,23 +357,6 @@ class _LoginPageState extends State<LoginPage> {
           ),
         ),
       ),
-    );
-  }
-
-  /// Construye el divider
-  Widget _buildDivider() {
-    return Row(
-      children: [
-        Expanded(child: Divider(color: Colors.grey[300])),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: Text(
-            'o',
-            style: TextStyle(color: Colors.grey[600], fontSize: 14),
-          ),
-        ),
-        Expanded(child: Divider(color: Colors.grey[300])),
-      ],
     );
   }
 
