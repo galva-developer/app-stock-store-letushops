@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import '../../domain/entities/product.dart';
 import '../providers/products_provider.dart';
 import 'add_product_page.dart';
+import '../../../../core/constants/color_constants.dart';
 
 /// Página de detalle de un producto
 class ProductDetailPage extends StatelessWidget {
@@ -22,8 +23,8 @@ class ProductDetailPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Detalle del Producto'),
-        backgroundColor: Theme.of(context).primaryColor,
-        foregroundColor: Colors.white,
+        backgroundColor: ColorConstants.primaryColor,
+        foregroundColor: ColorConstants.textOnPrimaryColor,
         actions: [
           IconButton(
             icon: const Icon(Icons.edit),
@@ -332,7 +333,7 @@ class ProductDetailPage extends StatelessWidget {
         title,
         style: Theme.of(context).textTheme.titleMedium?.copyWith(
           fontWeight: FontWeight.bold,
-          color: Theme.of(context).primaryColor,
+          color: ColorConstants.primaryColor,
         ),
       ),
     );

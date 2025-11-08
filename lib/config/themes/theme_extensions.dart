@@ -14,35 +14,80 @@ class ThemeExtensions {
 
       colorScheme: const ColorScheme.dark(
         brightness: Brightness.dark,
-        primary: ColorConstants.red400,
-        onPrimary: ColorConstants.grey900,
-        secondary: ColorConstants.red300,
-        onSecondary: ColorConstants.grey900,
+        primary: ColorConstants.primaryColor, // Mismo rojo que tema claro
+        onPrimary: ColorConstants.textOnPrimaryColor, // Texto blanco
+        primaryContainer: ColorConstants.red100,
+        onPrimaryContainer: ColorConstants.red900,
+
+        secondary: ColorConstants.secondaryColor, // Mismo rojo brillante
+        onSecondary: ColorConstants.textOnPrimaryColor, // Texto blanco
+        secondaryContainer: ColorConstants.red50,
+        onSecondaryContainer: ColorConstants.red800,
+
+        tertiary: ColorConstants.grey600,
+        onTertiary: ColorConstants.surfaceColor,
+        tertiaryContainer: ColorConstants.grey700,
+        onTertiaryContainer: ColorConstants.grey100,
+
         surface: ColorConstants.grey900,
         onSurface: ColorConstants.grey100,
-        error: ColorConstants.red400,
-        onError: ColorConstants.grey900,
+        surfaceContainerHighest: ColorConstants.grey800,
+        onSurfaceVariant: ColorConstants.grey300,
+
+        error: ColorConstants.errorColor, // Mismo rojo error que tema claro
+        onError: ColorConstants.textOnPrimaryColor,
+        errorContainer: ColorConstants.red900,
+        onErrorContainer: ColorConstants.red100,
+
+        outline: ColorConstants.grey700,
+        outlineVariant: ColorConstants.grey800,
+        shadow: ColorConstants.shadowColor,
+        scrim: ColorConstants.overlayColor,
+        inverseSurface: ColorConstants.grey100,
+        onInverseSurface: ColorConstants.grey900,
+        inversePrimary: ColorConstants.primaryColor,
       ),
 
       textTheme: buildTextTheme(Brightness.dark),
 
-      appBarTheme: AppBarTheme(
-        backgroundColor: ColorConstants.grey900,
-        foregroundColor: ColorConstants.grey100,
+      appBarTheme: const AppBarTheme(
+        backgroundColor: ColorConstants.primaryColor, // Rojo como tema claro
+        foregroundColor: ColorConstants.textOnPrimaryColor, // Texto blanco
         elevation: DimensionConstants.elevationMedium,
         centerTitle: true,
-        titleTextStyle: const TextStyle(
-          color: ColorConstants.grey100,
+        titleTextStyle: TextStyle(
+          color: ColorConstants.textOnPrimaryColor,
           fontSize: 20,
           fontWeight: FontWeight.w600,
+        ),
+        iconTheme: IconThemeData(
+          color: ColorConstants.textOnPrimaryColor,
+          size: DimensionConstants.iconSize,
+        ),
+        actionsIconTheme: IconThemeData(
+          color: ColorConstants.textOnPrimaryColor,
+          size: DimensionConstants.iconSize,
         ),
       ),
 
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
-          backgroundColor: ColorConstants.red400,
-          foregroundColor: ColorConstants.grey900,
+          backgroundColor:
+              ColorConstants.primaryColor, // Mismo rojo que tema claro
+          foregroundColor: ColorConstants.textOnPrimaryColor, // Texto blanco
+          disabledBackgroundColor: ColorConstants.grey600,
+          disabledForegroundColor: ColorConstants.textDisabledColor,
           elevation: DimensionConstants.elevationMedium,
+          shadowColor: ColorConstants.shadowColor,
+          surfaceTintColor: ColorConstants.primaryLightColor,
+          minimumSize: const Size(
+            DimensionConstants.buttonWidth,
+            DimensionConstants.buttonHeight,
+          ),
+          maximumSize: const Size(
+            double.infinity,
+            DimensionConstants.buttonHeight,
+          ),
           padding: const EdgeInsets.symmetric(
             horizontal: DimensionConstants.paddingLarge,
             vertical: DimensionConstants.paddingMedium,
@@ -52,7 +97,71 @@ class ThemeExtensions {
               DimensionConstants.radiusMedium,
             ),
           ),
+          textStyle: const TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
+            letterSpacing: 0.5,
+          ),
         ),
+      ),
+
+      outlinedButtonTheme: OutlinedButtonThemeData(
+        style: OutlinedButton.styleFrom(
+          foregroundColor: ColorConstants.primaryColor,
+          disabledForegroundColor: ColorConstants.textDisabledColor,
+          side: const BorderSide(
+            color: ColorConstants.primaryColor,
+            width: 1.5,
+          ),
+          minimumSize: const Size(
+            DimensionConstants.buttonWidth,
+            DimensionConstants.buttonHeight,
+          ),
+          padding: const EdgeInsets.symmetric(
+            horizontal: DimensionConstants.paddingLarge,
+            vertical: DimensionConstants.paddingMedium,
+          ),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(
+              DimensionConstants.radiusMedium,
+            ),
+          ),
+          textStyle: const TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
+            letterSpacing: 0.5,
+          ),
+        ),
+      ),
+
+      textButtonTheme: TextButtonThemeData(
+        style: TextButton.styleFrom(
+          foregroundColor: ColorConstants.primaryColor,
+          disabledForegroundColor: ColorConstants.textDisabledColor,
+          minimumSize: const Size(0, DimensionConstants.buttonHeight),
+          padding: const EdgeInsets.symmetric(
+            horizontal: DimensionConstants.paddingMedium,
+            vertical: DimensionConstants.paddingSmall,
+          ),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(DimensionConstants.radiusSmall),
+          ),
+          textStyle: const TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
+            letterSpacing: 0.5,
+          ),
+        ),
+      ),
+
+      floatingActionButtonTheme: const FloatingActionButtonThemeData(
+        backgroundColor: ColorConstants.primaryColor,
+        foregroundColor: ColorConstants.textOnPrimaryColor,
+        elevation: DimensionConstants.elevationMedium,
+        focusElevation: DimensionConstants.elevationHigh,
+        hoverElevation: DimensionConstants.elevationHigh,
+        splashColor: ColorConstants.primaryLightColor,
+        shape: CircleBorder(),
       ),
 
       cardTheme: CardTheme(
@@ -68,14 +177,56 @@ class ThemeExtensions {
         filled: true,
         fillColor: ColorConstants.grey800,
         contentPadding: const EdgeInsets.all(DimensionConstants.paddingMedium),
+
         border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(DimensionConstants.radiusMedium),
+          borderSide: const BorderSide(color: ColorConstants.grey600),
+        ),
+        enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(DimensionConstants.radiusMedium),
           borderSide: const BorderSide(color: ColorConstants.grey600),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(DimensionConstants.radiusMedium),
-          borderSide: const BorderSide(color: ColorConstants.red400, width: 2),
+          borderSide: const BorderSide(
+            color: ColorConstants.primaryColor, // Mismo rojo que tema claro
+            width: 2,
+          ),
         ),
+        errorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(DimensionConstants.radiusMedium),
+          borderSide: const BorderSide(
+            color: ColorConstants.errorColor,
+            width: 1,
+          ),
+        ),
+        focusedErrorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(DimensionConstants.radiusMedium),
+          borderSide: const BorderSide(
+            color: ColorConstants.errorColor,
+            width: 2,
+          ),
+        ),
+        disabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(DimensionConstants.radiusMedium),
+          borderSide: const BorderSide(color: ColorConstants.grey700),
+        ),
+
+        labelStyle: const TextStyle(
+          color: ColorConstants.grey400,
+          fontSize: 16,
+        ),
+        floatingLabelStyle: TextStyle(
+          color: ColorConstants.primaryColor, // Mismo rojo que tema claro
+          fontSize: 16,
+        ),
+        hintStyle: const TextStyle(color: ColorConstants.grey500, fontSize: 16),
+        errorStyle: const TextStyle(
+          color: ColorConstants.errorColor,
+          fontSize: 12,
+        ),
+        prefixIconColor: ColorConstants.grey500,
+        suffixIconColor: ColorConstants.grey500,
       ),
 
       iconTheme: const IconThemeData(
@@ -91,10 +242,21 @@ class ThemeExtensions {
 
       bottomNavigationBarTheme: const BottomNavigationBarThemeData(
         backgroundColor: ColorConstants.grey800,
-        selectedItemColor: ColorConstants.red400,
+        selectedItemColor:
+            ColorConstants.primaryColor, // Mismo rojo que tema claro
         unselectedItemColor: ColorConstants.grey400,
         type: BottomNavigationBarType.fixed,
         elevation: DimensionConstants.elevationMedium,
+        showSelectedLabels: true,
+        showUnselectedLabels: true,
+        selectedLabelStyle: TextStyle(
+          fontSize: 12,
+          fontWeight: FontWeight.w600,
+        ),
+        unselectedLabelStyle: TextStyle(
+          fontSize: 12,
+          fontWeight: FontWeight.w400,
+        ),
       ),
 
       drawerTheme: const DrawerThemeData(
@@ -124,8 +286,12 @@ class ThemeExtensions {
         backgroundColor: ColorConstants.grey700,
         deleteIconColor: ColorConstants.grey400,
         disabledColor: ColorConstants.grey800,
-        selectedColor: ColorConstants.red400,
-        secondarySelectedColor: ColorConstants.red300,
+        selectedColor: ColorConstants.primaryColor, // Mismo rojo que tema claro
+        secondarySelectedColor: ColorConstants.primaryLightColor,
+        labelStyle: const TextStyle(color: ColorConstants.grey100),
+        secondaryLabelStyle: const TextStyle(
+          color: ColorConstants.textOnPrimaryColor,
+        ),
         brightness: Brightness.dark,
         padding: const EdgeInsets.symmetric(
           horizontal: DimensionConstants.paddingSmall,
@@ -135,6 +301,85 @@ class ThemeExtensions {
           borderRadius: BorderRadius.circular(DimensionConstants.radiusMedium),
         ),
       ),
+
+      // Temas adicionales para consistencia
+      switchTheme: SwitchThemeData(
+        thumbColor: WidgetStateProperty.resolveWith((states) {
+          if (states.contains(WidgetState.selected)) {
+            return ColorConstants.primaryColor;
+          }
+          return ColorConstants.grey500;
+        }),
+        trackColor: WidgetStateProperty.resolveWith((states) {
+          if (states.contains(WidgetState.selected)) {
+            return ColorConstants.primaryLightColor;
+          }
+          return ColorConstants.grey700;
+        }),
+      ),
+
+      checkboxTheme: CheckboxThemeData(
+        fillColor: WidgetStateProperty.resolveWith((states) {
+          if (states.contains(WidgetState.selected)) {
+            return ColorConstants.primaryColor;
+          }
+          return Colors.transparent;
+        }),
+        checkColor: WidgetStateProperty.all(ColorConstants.textOnPrimaryColor),
+        side: const BorderSide(color: ColorConstants.grey500, width: 2),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(DimensionConstants.radiusSmall),
+        ),
+      ),
+
+      radioTheme: RadioThemeData(
+        fillColor: WidgetStateProperty.resolveWith((states) {
+          if (states.contains(WidgetState.selected)) {
+            return ColorConstants.primaryColor;
+          }
+          return ColorConstants.grey500;
+        }),
+      ),
+
+      progressIndicatorTheme: const ProgressIndicatorThemeData(
+        color: ColorConstants.primaryColor,
+        linearTrackColor: ColorConstants.grey700,
+        circularTrackColor: ColorConstants.grey700,
+      ),
+
+      tabBarTheme: const TabBarTheme(
+        labelColor: ColorConstants.primaryColor,
+        unselectedLabelColor: ColorConstants.grey400,
+        indicatorColor: ColorConstants.primaryColor,
+        indicatorSize: TabBarIndicatorSize.label,
+        labelStyle: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+        unselectedLabelStyle: TextStyle(
+          fontSize: 14,
+          fontWeight: FontWeight.w400,
+        ),
+      ),
+
+      listTileTheme: const ListTileThemeData(
+        contentPadding: EdgeInsets.symmetric(
+          horizontal: DimensionConstants.paddingMedium,
+          vertical: DimensionConstants.paddingSmall,
+        ),
+        minLeadingWidth: 40,
+        iconColor: ColorConstants.grey400,
+        textColor: ColorConstants.grey100,
+        selectedColor: ColorConstants.primaryColor,
+        selectedTileColor: ColorConstants.grey800,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(
+            Radius.circular(DimensionConstants.radiusSmall),
+          ),
+        ),
+      ),
+
+      splashColor: ColorConstants.primaryLightColor.withOpacity(0.3),
+      highlightColor: ColorConstants.primaryLightColor.withOpacity(0.1),
+      focusColor: ColorConstants.primaryColor.withOpacity(0.12),
+      hoverColor: ColorConstants.primaryColor.withOpacity(0.04),
     );
   }
 

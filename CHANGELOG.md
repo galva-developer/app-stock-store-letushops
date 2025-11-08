@@ -7,7 +7,90 @@ y este proyecto adhiere a [Semantic Versioning](https://semver.org/lang/es/).
 
 ## [Unreleased]
 
+### Corregido
+- **ProductDetailPage - AppBar y títulos siempre rojos:** La página de detalle del producto ahora mantiene consistencia de colores en ambos modos:
+  - AppBar: Fondo rojo (#D32F2F) con texto blanco en modo claro y oscuro
+  - Títulos de sección: Color rojo (#D32F2F) en modo claro y oscuro
+  - Usa `ColorConstants.primaryColor` directamente para garantizar consistencia
+- **CategorySelector siempre rojo cuando seleccionado:** Los chips de categoría ahora usan `ColorConstants.primaryColor` (#D32F2F) cuando están seleccionados en ambos modos (claro y oscuro):
+  - Categoría seleccionada: Fondo rojo con texto blanco en ambos modos
+  - Categoría no seleccionada: Fondo gris claro/oscuro según el tema con texto adaptativo
+  - Icono: Rojo cuando no seleccionado, blanco cuando seleccionado
+  - Borde: Visible solo en categorías no seleccionadas
+  - Check mark: Siempre blanco
+- **AppBar siempre rojo en modo oscuro:** Todas las páginas ahora usan `ColorConstants.primaryColor` directamente en lugar de `Theme.of(context).primaryColor` para garantizar que el AppBar sea siempre rojo (#D32F2F) en ambos modos:
+  - ProductsPage: AppBar rojo con texto/iconos blancos
+  - CameraPage: AppBar rojo con texto/iconos blancos (antes: negro)
+  - HomePage, InventoryPage, ReportsPage: Ya usaban el theme por defecto correctamente
+- **Tema Oscuro - Colores rojos consistentes:** El modo oscuro ahora usa exactamente los mismos colores rojos que el modo claro en todos los componentes:
+  - **ColorScheme:** primary, secondary, error ahora usan `ColorConstants.primaryColor` (#D32F2F) en lugar de variantes claras
+  - **AppBar:** Fondo rojo con texto blanco (igual que tema claro)
+  - **Botones:** ElevatedButton, OutlinedButton, TextButton, FloatingActionButton con rojo vibrante
+  - **Inputs:** Bordes enfocados en rojo (#D32F2F)
+  - **BottomNavigationBar:** Items seleccionados en rojo
+  - **Chips:** Chips seleccionados en rojo
+  - **Switch/Checkbox/Radio:** Controles activos en rojo
+  - **ProgressIndicator:** Indicadores de progreso en rojo
+  - **TabBar:** Tabs seleccionados en rojo
+  - **ListTile:** Items seleccionados en rojo
+  - Todos los acentos y highlights usan el mismo rojo vibrante (#D32F2F)
+- **Filtrado de productos por categoría:** Corregido error de índice compuesto de Firestore al filtrar productos por categoría. Ahora el ordenamiento se hace en el cliente en lugar de en el servidor.
+- **Consultas Firestore optimizadas:** Eliminados `orderBy` después de `where` en múltiples consultas para evitar requerir índices compuestos:
+  - `getProductsByCategory()` - Ordenamiento por nombre en cliente
+  - `getProductsByStatus()` - Ordenamiento por nombre en cliente
+  - `getProductsByPriceRange()` - Ordenamiento por precio en cliente
+  - `getProductsByCreator()` - Ordenamiento por fecha de creación en cliente
+
+### Mejorado
+- **FloatingActionButton "Agregar Producto" (ProductsPage):**
+  - Cambiado de `FloatingActionButton.extended` a `FloatingActionButton` simple (solo icono +) para mejor visualización.
+  - Siempre rojo (`ColorConstants.primaryColor` #D32F2F) en ambos modos (claro y oscuro).
+  - Icono blanco (`ColorConstants.textOnPrimaryColor`) con tamaño 28px para mejor visibilidad.
+  - Tooltip "Agregar Producto" al mantener presionado.
+  - Elevación de 6 para destacar sobre el contenido.
+  - Diseño limpio y consistente que no se corta en ningún modo.
+- **Botón Guardar/Actualizar en AddProductPage:** 
+  - Ahora usa `ColorConstants.primaryColor` directamente en lugar de `Theme.of(context).primaryColor` para asegurar que siempre sea rojo en ambos modos (claro y oscuro).
+  - Agregado padding vertical de 16px para mejor visualización.
+  - Agregado estilo de texto explícito (fontSize: 16, fontWeight: w600) para garantizar legibilidad.
+  - Texto siempre blanco sobre fondo rojo para máximo contraste.
+- **UI Home Page:** Ajustado `childAspectRatio` de las tarjetas de accesos rápidos de 1.5 a 1.3 para dar más espacio vertical.
+- **Widget ActionCard:** Agregado `maxLines: 2` y `overflow: TextOverflow.ellipsis` para manejar mejor textos largos como "Agregar Producto".
+
 ### Añadido
+- **Sistema de Registro de Actividades (Activity Logs)**
+  - **Capa de Dominio:**
+    - `ActivityLog` entity con campos: id, type, userId, userName, userEmail, description, metadata, timestamp
+    - `ActivityType` enum con 9 tipos: productCreated, productUpdated, productDeleted, stockAdjusted, userCreated, userUpdated, userDeleted, login, logout
+    - Getters para displayName e icon de cada tipo de actividad
+  - **Capa de Datos:**
+    - `ActivityLogModel` con conversión bidireccional entre Firestore y entidad
+    - `FirebaseActivityDataSource` con métodos:
+      - `logActivity()` - Crear nuevo registro
+      - `getRecentActivities()` - Obtener últimas N actividades
+      - `getActivitiesByUser()` - Filtrar por usuario
+      - `getActivitiesByType()` - Filtrar por tipo
+      - `watchRecentActivities()` - Stream en tiempo real
+      - `deleteOldActivities()` - Limpieza de registros antiguos
+    - `ActivityLogService` - Servicio helper con métodos específicos:
+      - `logProductCreated()` - Registrar creación de producto
+      - `logProductUpdated()` - Registrar actualización de producto
+      - `logProductDeleted()` - Registrar eliminación de producto
+      - `logStockAdjusted()` - Registrar ajuste de stock
+  - **Capa de Presentación:**
+    - `RecentActivitiesWidget` - Widget con stream builder que muestra actividades en tiempo real
+    - Formateo de tiempo relativo personalizado ("hace X minutos/horas/días")
+    - Integración en `HomePage` reemplazando placeholder anterior
+  - **Integración con ProductsProvider:**
+    - Registro automático al crear producto (con usuario, timestamp, metadata)
+    - Registro automático al actualizar producto
+    - Registro automático al eliminar producto
+    - Manejo de errores que no afecta operaciones principales
+  - **Firestore Rules:**
+    - Lectura: Todos los usuarios autenticados
+    - Creación: Todos los usuarios autenticados
+    - Actualización/Eliminación: Solo administradores
+
 - **FASE 4: Módulo completo de Gestión de Productos**
   - **Capa de Dominio:**
     - `Product` entity con 20+ campos (nombre, precio, stock, categoría, barcode, SKU, imágenes, etc.)

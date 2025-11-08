@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../shared/providers/theme_provider.dart';
+import '../../../../core/constants/color_constants.dart';
 import '../providers/products_provider.dart';
 import '../widgets/product_card.dart';
 import '../widgets/category_selector.dart';
@@ -37,8 +38,8 @@ class _ProductsPageState extends State<ProductsPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Productos'),
-        backgroundColor: Theme.of(context).primaryColor,
-        foregroundColor: Colors.white,
+        backgroundColor: ColorConstants.primaryColor, // Siempre rojo
+        foregroundColor: ColorConstants.textOnPrimaryColor, // Siempre blanco
         actions: [
           // Botón de tema
           Consumer<ThemeProvider>(
@@ -133,17 +134,18 @@ class _ProductsPageState extends State<ProductsPage> {
           ),
         ],
       ),
-      floatingActionButton: FloatingActionButton.extended(
+      floatingActionButton: FloatingActionButton(
         onPressed: () {
           Navigator.push(
             context,
             MaterialPageRoute(builder: (_) => const AddProductPage()),
           );
         },
-        icon: const Icon(Icons.add),
-        label: const Text('Agregar Producto'),
-        backgroundColor: Theme.of(context).primaryColor,
-        foregroundColor: Colors.white,
+        backgroundColor: ColorConstants.primaryColor,
+        foregroundColor: ColorConstants.textOnPrimaryColor,
+        elevation: 6,
+        tooltip: 'Agregar Producto',
+        child: const Icon(Icons.add, size: 28),
       ),
     );
   }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../domain/entities/product.dart';
+import '../../../../core/constants/color_constants.dart';
 
 /// Selector de categoría de productos
 class CategorySelector extends StatelessWidget {
@@ -53,6 +54,9 @@ class CategorySelector extends StatelessWidget {
     required VoidCallback onTap,
     required IconData icon,
   }) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    
     return FilterChip(
       label: Row(
         mainAxisSize: MainAxisSize.min,
@@ -60,7 +64,9 @@ class CategorySelector extends StatelessWidget {
           Icon(
             icon,
             size: 18,
-            color: isSelected ? Colors.white : Theme.of(context).primaryColor,
+            color: isSelected 
+                ? ColorConstants.textOnPrimaryColor 
+                : ColorConstants.primaryColor,
           ),
           const SizedBox(width: 6),
           Text(label),
@@ -68,11 +74,25 @@ class CategorySelector extends StatelessWidget {
       ),
       selected: isSelected,
       onSelected: (_) => onTap(),
-      selectedColor: Theme.of(context).primaryColor,
-      backgroundColor: Colors.grey[200],
+      selectedColor: ColorConstants.primaryColor, // Siempre rojo cuando seleccionado
+      backgroundColor: isDark 
+          ? ColorConstants.grey800 
+          : ColorConstants.grey200, // Gris oscuro en dark mode
       labelStyle: TextStyle(
-        color: isSelected ? Colors.white : Colors.black87,
+        color: isSelected 
+            ? ColorConstants.textOnPrimaryColor // Blanco cuando seleccionado
+            : (isDark ? ColorConstants.grey100 : ColorConstants.grey900), // Texto adaptativo
         fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+      ),
+      checkmarkColor: ColorConstants.textOnPrimaryColor, // Check blanco
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(20),
+        side: BorderSide(
+          color: isSelected 
+              ? ColorConstants.primaryColor 
+              : (isDark ? ColorConstants.grey700 : ColorConstants.grey300),
+          width: isSelected ? 0 : 1,
+        ),
       ),
     );
   }

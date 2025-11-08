@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../../../authentication/presentation/providers/auth_provider.dart';
 import '../../../products/presentation/pages/add_product_page.dart';
 import '../../../products/presentation/providers/products_provider.dart';
+import '../../../activity/presentation/widgets/recent_activities_widget.dart';
 import '../../../../shared/providers/theme_provider.dart';
 
 /// Muestra un diálogo de confirmación antes de cerrar sesión
@@ -139,12 +140,7 @@ class _HomePageState extends State<HomePage> {
             const SizedBox(height: 24),
 
             // Actividad reciente
-            Text(
-              'Actividad reciente',
-              style: Theme.of(context).textTheme.titleLarge,
-            ),
-            const SizedBox(height: 16),
-            _buildRecentActivity(context),
+            RecentActivitiesWidget(),
           ],
         ),
       ),
@@ -239,7 +235,7 @@ class _HomePageState extends State<HomePage> {
       physics: const NeverScrollableScrollPhysics(),
       mainAxisSpacing: 12,
       crossAxisSpacing: 12,
-      childAspectRatio: 1.5,
+      childAspectRatio: 1.3, // Aumentado para dar más espacio vertical
       children: [
         _ActionCard(
           title: 'Agregar Producto',
@@ -281,23 +277,6 @@ class _HomePageState extends State<HomePage> {
           },
         ),
       ],
-    );
-  }
-
-  Widget _buildRecentActivity(BuildContext context) {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          children: [
-            _ActivityItem(
-              title: 'Sin actividad reciente',
-              subtitle: 'Comienza agregando productos',
-              icon: Icons.info_outline,
-            ),
-          ],
-        ),
-      ),
     );
   }
 }
@@ -374,36 +353,14 @@ class _ActionCard extends StatelessWidget {
               Text(
                 title,
                 textAlign: TextAlign.center,
+                maxLines: 2, // Permite hasta 2 líneas
+                overflow: TextOverflow.ellipsis, // Muestra ... si es muy largo
                 style: Theme.of(context).textTheme.bodyMedium,
               ),
             ],
           ),
         ),
       ),
-    );
-  }
-}
-
-class _ActivityItem extends StatelessWidget {
-  final String title;
-  final String subtitle;
-  final IconData icon;
-
-  const _ActivityItem({
-    required this.title,
-    required this.subtitle,
-    required this.icon,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return ListTile(
-      leading: CircleAvatar(
-        backgroundColor: Colors.grey[200],
-        child: Icon(icon, color: Colors.grey[600]),
-      ),
-      title: Text(title),
-      subtitle: Text(subtitle),
     );
   }
 }

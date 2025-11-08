@@ -85,6 +85,18 @@ service cloud.firestore {
       allow write: if isAuthenticated();
     }
     
+    // Reglas para activity_logs
+    match /activity_logs/{logId} {
+      // Lectura: Todos los usuarios autenticados
+      allow read: if isAuthenticated();
+      
+      // Creación: Todos los usuarios autenticados pueden crear logs
+      allow create: if isAuthenticated();
+      
+      // Actualización y eliminación: Solo administradores
+      allow update, delete: if isAdmin();
+    }
+    
     // Por defecto, denegar todo lo demás
     match /{document=**} {
       allow read, write: if false;

@@ -48,12 +48,15 @@ class FirebaseProductDataSource {
           await _firestore
               .collection(_collection)
               .where('category', isEqualTo: category)
-              .orderBy('name')
               .get();
 
-      return snapshot.docs
-          .map((doc) => ProductModel.fromFirestore(doc))
-          .toList();
+      // Ordenar en el cliente para evitar necesidad de índice compuesto
+      final products =
+          snapshot.docs.map((doc) => ProductModel.fromFirestore(doc)).toList();
+
+      products.sort((a, b) => a.name.compareTo(b.name));
+
+      return products;
     } catch (e) {
       throw Exception('Error obteniendo productos por categoría: $e');
     }
@@ -186,12 +189,15 @@ class FirebaseProductDataSource {
           await _firestore
               .collection(_collection)
               .where('status', isEqualTo: status)
-              .orderBy('name')
               .get();
 
-      return snapshot.docs
-          .map((doc) => ProductModel.fromFirestore(doc))
-          .toList();
+      // Ordenar en el cliente para evitar necesidad de índice compuesto
+      final products =
+          snapshot.docs.map((doc) => ProductModel.fromFirestore(doc)).toList();
+
+      products.sort((a, b) => a.name.compareTo(b.name));
+
+      return products;
     } catch (e) {
       throw Exception('Error obteniendo productos por estado: $e');
     }
@@ -208,14 +214,17 @@ class FirebaseProductDataSource {
               .collection(_collection)
               .where('price', isGreaterThanOrEqualTo: minPrice)
               .where('price', isLessThanOrEqualTo: maxPrice)
-              .orderBy('price')
               .get();
 
-      return snapshot.docs
-          .map((doc) => ProductModel.fromFirestore(doc))
-          .toList();
+      // Ordenar en el cliente para evitar necesidad de índice compuesto
+      final products =
+          snapshot.docs.map((doc) => ProductModel.fromFirestore(doc)).toList();
+
+      products.sort((a, b) => a.price.compareTo(b.price));
+
+      return products;
     } catch (e) {
-      throw Exception('Error obteniendo productos por precio: $e');
+      throw Exception('Error obteniendo productos por rango de precio: $e');
     }
   }
 
@@ -226,12 +235,15 @@ class FirebaseProductDataSource {
           await _firestore
               .collection(_collection)
               .where('createdBy', isEqualTo: userId)
-              .orderBy('createdAt', descending: true)
               .get();
 
-      return snapshot.docs
-          .map((doc) => ProductModel.fromFirestore(doc))
-          .toList();
+      // Ordenar en el cliente para evitar necesidad de índice compuesto
+      final products =
+          snapshot.docs.map((doc) => ProductModel.fromFirestore(doc)).toList();
+
+      products.sort((a, b) => b.createdAt.compareTo(a.createdAt));
+
+      return products;
     } catch (e) {
       throw Exception('Error obteniendo productos por creador: $e');
     }

@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import '../../domain/entities/product.dart';
 import '../providers/products_provider.dart';
+import '../../../../core/constants/color_constants.dart';
 
 /// Página para agregar o editar un producto
 class AddProductPage extends StatefulWidget {
@@ -261,8 +262,13 @@ class _AddProductPageState extends State<AddProductPage> {
                   child: ElevatedButton(
                     onPressed: _isSaving ? null : _saveProduct,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Theme.of(context).primaryColor,
-                      foregroundColor: Colors.white,
+                      backgroundColor:
+                          ColorConstants.primaryColor, // Siempre rojo
+                      foregroundColor:
+                          ColorConstants.textOnPrimaryColor, // Siempre blanco
+                      padding: const EdgeInsets.symmetric(
+                        vertical: 16,
+                      ), // Más padding vertical
                     ),
                     child:
                         _isSaving
@@ -276,7 +282,13 @@ class _AddProductPageState extends State<AddProductPage> {
                                 ),
                               ),
                             )
-                            : Text(_isEditing ? 'Actualizar' : 'Guardar'),
+                            : Text(
+                              _isEditing ? 'Actualizar' : 'Guardar',
+                              style: const TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
                   ),
                 ),
               ],

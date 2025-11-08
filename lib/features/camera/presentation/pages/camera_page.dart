@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../core/constants/color_constants.dart';
 
 /// Página de cámara para escanear productos
 class CameraPage extends StatelessWidget {
@@ -9,7 +10,8 @@ class CameraPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Cámara'),
-        backgroundColor: Colors.black,
+        backgroundColor: ColorConstants.primaryColor, // Siempre rojo
+        foregroundColor: ColorConstants.textOnPrimaryColor, // Siempre blanco
       ),
       body: Center(
         child: Column(
