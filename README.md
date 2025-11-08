@@ -10,7 +10,40 @@ Una aplicación Flutter revolucionaria que optimiza la gestión de stock mediant
 
 ## 🚀 Características Principales
 
-### 📸 Gestión de Stock Inteligente
+### � Gestión Completa de Productos
+- **CRUD Completo**: Crear, leer, actualizar y eliminar productos
+- **Variantes de Color**: Gestión de stock independiente por color
+- **Categorización**: 10 categorías predefinidas (Electrónica, Ropa, Alimentos, etc.)
+- **Estados de Producto**: Activo, Inactivo, Descontinuado
+- **Búsqueda Avanzada**: Filtrado por nombre, descripción y categoría
+- **Alertas Inteligentes**: Notificaciones de stock bajo o agotado
+- **Gestión de Precios**: Precio de venta, costo y cálculo automático de margen
+- **Identificación**: SKU y código de barras
+- **Metadatos**: Marca, fabricante, etiquetas personalizadas
+
+### 💰 Sistema de Ventas (En Desarrollo)
+- **Punto de Venta Completo**: Interfaz intuitiva para realizar ventas
+- **Carrito de Compras**: Selección de productos con variantes
+- **Métodos de Pago**: Efectivo, tarjeta, transferencia
+- **Actualización Automática**: Stock se reduce al completar venta
+- **Numeración Automática**: Formato SALE-YYYYMMDD-XXXX
+- **Datos de Cliente**: Información opcional del comprador
+- **Estadísticas**: Ventas diarias, semanales y mensuales
+- **Cancelación de Ventas**: Reversión de stock incluida
+
+### 📊 Sistema de Actividades Recientes
+- **Registro Automático**: Todas las acciones importantes se registran
+- **Timeline en Tiempo Real**: Actualización instantánea de actividades
+- **Tipos de Actividad**: Productos, ventas, usuarios, stock
+- **Información Detallada**: Usuario, timestamp y metadata
+
+### 👥 Sistema de Roles y Permisos
+- **Administrador**: Acceso completo, gestión de usuarios
+- **Manager**: Gestión de inventario y reportes
+- **Employee**: Operaciones básicas de productos y ventas
+- **Panel de Administración**: Control completo de usuarios
+
+### �📸 Gestión de Stock Inteligente (Próximamente)
 - **Fotografía Automática**: Captura productos con la cámara del dispositivo
 - **Reconocimiento IA**: Extracción automática de características del producto
 - **Carga Rápida**: Proceso optimizado de menos de 30 segundos por producto
@@ -24,30 +57,59 @@ Una aplicación Flutter revolucionaria que optimiza la gestión de stock mediant
 - **Autenticación**: Firebase Authentication
 
 ### 📊 Funcionalidades del Sistema
-- ✅ Gestión completa de inventario
-- ✅ Búsqueda avanzada y filtros
-- ✅ Reportes de stock en tiempo real
-- ✅ Alertas de stock bajo
-- ✅ Historial de movimientos
-- ✅ Interfaz intuitiva y responsiva
+- ✅ **Gestión completa de productos con variantes de color**
+- ✅ **Sistema de ventas (punto de venta)**
+- ✅ **Búsqueda avanzada y filtros por categoría**
+- ✅ **Registro de actividades recientes en tiempo real**
+- ✅ **Alertas de stock bajo y agotado**
+- ✅ **Estadísticas de productos y ventas**
+- ✅ **Interfaz intuitiva y responsiva**
 - ✅ **Sistema de roles y permisos**
 - ✅ **Panel de administración de usuarios**
 - ✅ **Modo oscuro con persistencia**
+- ✅ **Cálculo automático de márgenes de ganancia**
+- ✅ **Soporte para múltiples métodos de pago**
+- 🚧 **Historial de movimientos de inventario** (En desarrollo)
+- 🚧 **Reportes avanzados y exportación** (En desarrollo)
 
 ## 🏗️ Arquitectura del Proyecto
 
 ```
 📦 Stock LetuShops
 ├── 📱 Frontend (Flutter)
-│   ├── 📸 Módulo de Cámara
-│   ├── 🧠 Procesamiento IA
-│   ├── 📋 Gestión de Inventario
-│   └── 👤 Autenticación
+│   ├── � Módulo de Autenticación
+│   │   ├── Login/Logout
+│   │   ├── Recuperación de contraseña
+│   │   └── Sistema de roles (Admin/Manager/Employee)
+│   ├── 📦 Módulo de Productos
+│   │   ├── CRUD completo
+│   │   ├── Variantes de color con stock independiente
+│   │   ├── Búsqueda y filtros
+│   │   └── Estadísticas
+│   ├── 💰 Módulo de Ventas
+│   │   ├── Carrito de compras
+│   │   ├── Punto de venta (POS)
+│   │   ├── Múltiples métodos de pago
+│   │   └── Actualización de stock
+│   ├── � Sistema de Actividades
+│   │   ├── Registro automático
+│   │   └── Timeline en tiempo real
+│   ├── 👥 Panel de Administración
+│   │   ├── Gestión de usuarios
+│   │   ├── Cambio de roles
+│   │   └── Estadísticas de usuarios
+│   └── 🎨 Temas y UI
+│       ├── Modo claro/oscuro
+│       └── Paleta rojo-blanco-negro
 ├── ☁️ Backend (Firebase)
 │   ├── 🔥 Firestore Database
-│   ├── 📦 Storage
+│   │   ├── Colección users
+│   │   ├── Colección products
+│   │   ├── Colección sales
+│   │   └── Colección activity_logs
+│   ├── 📦 Storage (imágenes)
 │   └── 🔐 Authentication
-└── 🤖 Servicios IA
+└── 🤖 Servicios IA (Próximamente)
     ├── 👁️ Reconocimiento de Imágenes
     ├── 📝 Extracción de Texto (OCR)
     └── 🏷️ Clasificación de Productos
@@ -191,29 +253,42 @@ La aplicación cuenta con un **sistema de roles jerárquico** con tres niveles d
 > 
 > 📖 Ver **[ACCESS_GUIDE.md](./ACCESS_GUIDE.md)** para instrucciones detalladas.
 
-## �📁 Estructura del Proyecto
+## 📁 Estructura del Proyecto
 
 ```
 lib/
 ├── main.dart                 # Punto de entrada de la aplicación
 ├── core/                     # Funcionalidades centrales
-│   ├── constants/           # Constantes globales
+│   ├── constants/           # Constantes globales (colores, configuración)
 │   ├── utils/              # Utilidades y helpers
 │   └── services/           # Servicios base
-├── features/               # Características principales
-│   ├── authentication/    # Módulo de autenticación
-│   ├── camera/            # Módulo de cámara e IA
-│   ├── inventory/         # Gestión de inventario
-│   ├── products/          # Gestión de productos
-│   └── reports/           # Reportes y estadísticas
-├── shared/                # Componentes compartidos
-│   ├── widgets/           # Widgets reutilizables
-│   ├── models/            # Modelos de datos
-│   └── providers/         # Gestores de estado
-└── config/                # Configuraciones
-    ├── routes/            # Rutas de navegación
-    ├── themes/            # Temas y estilos
-    └── firebase/          # Configuración Firebase
+├── features/               # Características principales (Clean Architecture)
+│   ├── authentication/    # ✅ Módulo de autenticación
+│   │   ├── domain/       # Entidades, repositorios, casos de uso
+│   │   ├── data/         # Modelos, datasources, repositorios impl
+│   │   └── presentation/ # Páginas, widgets, providers
+│   ├── products/         # ✅ Gestión de productos
+│   │   ├── domain/       # Product, ProductVariant, repository
+│   │   ├── data/         # ProductModel, Firebase datasource
+│   │   └── presentation/ # ProductsPage, AddProductPage, widgets
+│   ├── sales/            # 🚧 Módulo de ventas (En desarrollo)
+│   │   ├── domain/       # Sale, SaleItem, repository
+│   │   ├── data/         # SaleModel, Firebase datasource
+│   │   └── presentation/ # SalesPage, NewSalePage, cart
+│   ├── home/             # ✅ Pantalla principal y actividades
+│   │   ├── domain/       # ActivityLog entity
+│   │   ├── data/         # ActivityLog datasource
+│   │   └── presentation/ # HomePage, widgets
+│   ├── inventory/        # 📋 Gestión de inventario (Planeado)
+│   └── reports/          # 📋 Reportes y estadísticas (Planeado)
+├── shared/               # Componentes compartidos
+│   ├── widgets/         # Widgets reutilizables (AppLogo, ThemeWidgets)
+│   ├── models/          # Modelos de datos compartidos
+│   └── providers/       # Gestores de estado (ThemeProvider)
+└── config/              # Configuraciones
+    ├── routes/          # Rutas de navegación (GoRouter)
+    ├── themes/          # Temas y estilos (claro/oscuro)
+    └── firebase/        # Configuración Firebase
 ```
 
 ## 🔧 Configuración de Firebase
@@ -242,19 +317,81 @@ products: {
   productId: {
     name: string,
     description: string,
-    category: string,
+    category: string,          // 'electronics', 'clothing', 'food', etc.
+    status: string,            // 'active', 'inactive', 'discontinued'
     price: number,
+    costPrice: number,
     stock: number,
+    minStock: number,
+    sku: string,
+    barcode: string,
+    brand: string,
+    manufacturer: string,
+    tags: [string],
     images: [string],
-    characteristics: {
-      brand: string,
-      model: string,
-      color: string,
-      size: string,
-      // ... más características extraídas por IA
-    },
+    variants: [               // Variantes de color con stock independiente
+      {
+        colorName: string,
+        colorHex: string,
+        stock: number,
+        sku: string,
+      }
+    ],
+    createdBy: string,
     createdAt: timestamp,
     updatedAt: timestamp
+  }
+}
+
+// Colección de ventas
+sales: {
+  saleId: {
+    saleNumber: string,        // 'SALE-YYYYMMDD-0001'
+    items: [
+      {
+        productId: string,
+        productName: string,
+        variantColorName: string,
+        variantColorHex: string,
+        quantity: number,
+        unitPrice: number,
+        unitCost: number,
+        subtotal: number,
+        discount: number,
+      }
+    ],
+    subtotal: number,
+    tax: number,
+    discount: number,
+    total: number,
+    paymentMethod: string,     // 'cash', 'card', 'transfer', 'other'
+    status: string,            // 'completed', 'cancelled', 'refunded'
+    customerName: string,
+    customerEmail: string,
+    customerPhone: string,
+    notes: string,
+    soldBy: string,
+    createdAt: timestamp,
+    updatedAt: timestamp
+  }
+}
+
+// Colección de actividades
+activity_logs: {
+  activityId: {
+    type: string,              // 'productCreated', 'saleCreated', etc.
+    userId: string,
+    userName: string,
+    userEmail: string,
+    description: string,
+    metadata: {
+      productId: string,
+      productName: string,
+      saleId: string,
+      saleNumber: string,
+      // ... más metadata según tipo
+    },
+    timestamp: timestamp
   }
 }
 ```
@@ -307,13 +444,28 @@ service cloud.firestore {
       allow read: if isAuthenticated();
       allow write: if isManagerOrAdmin();
     }
+    
+    // Reglas para ventas (todos pueden crear, managers/admins pueden modificar)
+    match /sales/{saleId} {
+      allow read: if isAuthenticated();
+      allow create: if isAuthenticated();
+      allow update, delete: if isManagerOrAdmin();
+    }
+    
+    // Reglas para actividades (todos pueden crear, solo admins pueden eliminar)
+    match /activity_logs/{activityId} {
+      allow read: if isAuthenticated();
+      allow create: if isAuthenticated();
+      allow update, delete: if isAdmin();
+    }
+    }
   }
 }
 ```
 
-## 🤖 Integración de IA
+## 🤖 Integración de IA (Próximamente)
 
-### Servicios de Reconocimiento
+### Servicios de Reconocimiento Planeados
 - **Google ML Kit**: Reconocimiento de texto (OCR)
 - **TensorFlow Lite**: Clasificación de productos
 - **Cloud Vision API**: Análisis avanzado de imágenes
@@ -327,30 +479,67 @@ service cloud.firestore {
 
 ## 📱 Capturas de Pantalla
 
-| Pantalla Principal | Cámara IA | Gestión de Stock |
+| Pantalla Principal | Productos | Gestión de Ventas |
 |:--:|:--:|:--:|
-| ![Home](assets/screenshots/home.png) | ![Camera](assets/screenshots/camera.png) | ![Stock](assets/screenshots/stock.png) |
+| ![Home](assets/screenshots/home.png) | ![Products](assets/screenshots/products.png) | ![Sales](assets/screenshots/sales.png) |
 
 ## 🚀 Roadmap
 
-### Versión 1.0 (Actual)
-- [x] Autenticación de usuarios
+### Versión 0.2.0 - Gestión de Productos ✅ COMPLETADO
+- [x] CRUD completo de productos
+- [x] Sistema de variantes de color con stock independiente
+- [x] Búsqueda y filtros por categoría
+- [x] Alertas de stock bajo/agotado
+- [x] Estadísticas en tiempo real
+- [x] Integración con actividades recientes
+- [x] Gestión de precios y márgenes
+- [x] Validaciones completas
+
+### Versión 0.3.0 - Módulo de Ventas 🚧 EN DESARROLLO
 - [x] Sistema de roles (Admin, Manager, Employee)
 - [x] Panel de administración de usuarios
 - [x] **Modo oscuro con persistencia**
-- [x] Cámara básica y captura
-- [x] Base de datos Firebase
-- [ ] Integración IA básica
-- [ ] CRUD de productos
+- [x] Sistema de actividades recientes
+- [ ] Punto de venta completo
+- [ ] Carrito de compras
+- [ ] Actualización automática de stock
+- [ ] Múltiples métodos de pago
+- [ ] Estadísticas de ventas
 
-### Versión 1.1 (Próxima)
-- [ ] Reconocimiento avanzado de productos
-- [ ] Reportes detallados
-- [ ] Exportación de datos
-- [ ] Modo offline
-- [ ] Temas personalizados y paletas de colores
+### Versión 0.4.0 - Módulo de Cámara e IA (Planeado)
+- [ ] Captura de fotos con cámara
+- [ ] Integración con Google ML Kit
+- [ ] Text Recognition (OCR)
+- [ ] Object Detection
+- [ ] Label Detection
+- [ ] Análisis automático de productos
 
-### Versión 2.0 (Futuro)
+### Versión 0.5.0 - Gestión de Inventario (Planeado)
+- [ ] Control de stock en tiempo real
+- [ ] Movimientos de inventario
+- [ ] Alertas de stock bajo
+- [ ] Historial de movimientos
+- [ ] Ajustes de inventario
+- [ ] Transferencias entre ubicaciones
+
+### Versión 0.6.0 - Reportes y Estadísticas (Planeado)
+- [ ] Dashboard de analytics
+- [ ] Gráficos interactivos
+- [ ] Reportes de ventas
+- [ ] Reportes de inventario
+- [ ] Exportación de datos (PDF/Excel)
+- [ ] KPIs en tiempo real
+
+### Versión 1.0.0 - Release Producción (Futuro)
+### Versión 1.0.0 - Release Producción (Futuro)
+- [ ] Optimización de performance
+- [ ] Modo offline completo
+- [ ] Tests completos (unit, widget, integration)
+- [ ] Seguridad reforzada
+- [ ] Accesibilidad completa
+- [ ] Soporte multi-idioma
+- [ ] CI/CD configurado
+- [ ] Publicación en stores
 - [ ] Análisis predictivo de stock
 - [ ] Integración con sistemas ERP
 - [ ] API para terceros

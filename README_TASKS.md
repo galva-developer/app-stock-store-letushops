@@ -13,7 +13,7 @@ Este documento detalla la implementación técnica completa del proyecto Stock L
 ### [FASE 2.1: SISTEMA DE ROLES Y ADMINISTRACIÓN](#fase-21-sistema-de-roles-y-administración)
 ### [FASE 3: NÚCLEO DE LA APLICACIÓN](#fase-3-núcleo-de-la-aplicación)
 ### [FASE 4: GESTIÓN DE PRODUCTOS](#fase-4-gestión-de-productos)
-### [FASE 5: MÓDULO DE CÁMARA E IA](#fase-5-módulo-de-cámara-e-ia)
+### [FASE 5: MÓDULO DE VENTAS](#fase-5-módulo-de-ventas)
 ### [FASE 6: GESTIÓN DE INVENTARIO](#fase-6-gestión-de-inventario)
 ### [FASE 7: REPORTES Y ESTADÍSTICAS](#fase-7-reportes-y-estadísticas)
 ### [FASE 8: OPTIMIZACIÓN Y PULIDO](#fase-8-optimización-y-pulido)
@@ -598,4 +598,287 @@ Este documento detalla la implementación técnica completa del proyecto Stock L
   - ProductCard indica presencia de variantes
   - Stock total se calcula correctamente
   - hasLowStock/isOutOfStock usan totalStock
+
+---
+
+## 💰 FASE 5: MÓDULO DE VENTAS
+**Objetivo**: Implementar sistema completo de gestión de ventas con Clean Architecture
+
+### 5.1 Entidades de Dominio
+- [ ] **5.1.1** Crear `lib/features/sales/domain/entities/sale.dart`
+  - Sale class con campos: id, saleNumber, items, subtotal, tax, discount, total, paymentMethod, customerName, customerEmail, customerPhone, notes, soldBy, createdAt, updatedAt
+  - PaymentMethod enum (cash, card, transfer, other)
+  - SaleStatus enum (completed, cancelled, refunded)
+  - Getters: totalItems, itemCount, netProfit
+  - Método copyWith() para actualizaciones inmutables
+
+- [ ] **5.1.2** Crear `lib/features/sales/domain/entities/sale_item.dart`
+  - SaleItem class con campos: productId, productName, variantColorName, variantColorHex, quantity, unitPrice, unitCost, subtotal, discount
+  - Getters: totalPrice, profit
+  - Método copyWith() para actualizaciones inmutables
+  - Equatable para comparaciones
+
+### 5.2 Modelos de Datos
+- [ ] **5.2.1** Crear `lib/features/sales/data/models/sale_item_model.dart`
+  - Métodos: fromMap(), toMap() para conversión con Firestore
+  - Métodos: fromEntity(), toEntity() para conversión con domain
+  - Parsing seguro de datos numéricos
+
+- [ ] **5.2.2** Crear `lib/features/sales/data/models/sale_model.dart`
+  - Método fromFirestore() para convertir DocumentSnapshot a SaleModel
+  - Método toFirestore() para convertir SaleModel a Map para Firestore
+  - Método fromEntity() para convertir Sale a SaleModel
+  - Método toEntity() para convertir SaleModel a Sale
+  - Parsing seguro de enums (paymentMethod, status)
+  - Conversión de array de items con SaleItemModel
+
+### 5.3 Repositorio de Dominio
+- [ ] **5.3.1** Crear `lib/features/sales/domain/repositories/sale_repository.dart`
+  - Métodos CRUD: createSale, getSaleById, updateSale, deleteSale
+  - Métodos de consulta: getAllSales, getSalesByDateRange, getSalesBySeller, getSalesByCustomer
+  - Métodos de estadísticas: getTodaySales, getSalesStats, getSalesByPaymentMethod
+  - Streams: watchSales, watchTodaySales
+  - Clase SalesStats con: totalSales, totalRevenue, totalProfit, averageTicket, salesCount, topProducts
+
+### 5.4 Fuente de Datos Firebase
+- [ ] **5.4.1** Crear `lib/features/sales/data/datasources/firebase_sale_datasource.dart`
+  - Configurar colección 'sales' en Firestore
+  - Implementar addSale() con generación automática de saleNumber (formato: SALE-YYYYMMDD-XXXX)
+  - Implementar getAllSales() con ordenamiento por createdAt descendente
+  - Implementar getSalesByDateRange() con queries where para timestamps
+  - Implementar getTodaySales() filtrando por fecha actual
+  - Implementar updateSale() y deleteSale()
+  - Implementar streams para actualizaciones en tiempo real
+  - Método para actualizar stock de productos al crear venta
+
+### 5.5 Implementación del Repositorio
+- [ ] **5.5.1** Crear `lib/features/sales/data/repositories/sale_repository_impl.dart`
+  - Implementar todos los métodos de SaleRepository
+  - Delegar operaciones al FirebaseSaleDataSource
+  - Calcular estadísticas agregadas en getSalesStats()
+  - Manejar transacciones para garantizar consistencia de datos
+  - Integrar actualización de stock de productos
+
+### 5.6 Casos de Uso
+- [ ] **5.6.1** Crear `lib/features/sales/domain/usecases/sale_usecases.dart`
+  - CreateSaleUseCase: Crear nueva venta y actualizar stock de productos
+  - GetAllSalesUseCase: Obtener lista de todas las ventas
+  - GetSaleByIdUseCase: Obtener detalles de una venta específica
+  - GetTodaySalesUseCase: Obtener ventas del día actual
+  - GetSalesStatsUseCase: Obtener estadísticas de ventas
+  - GetSalesByDateRangeUseCase: Filtrar ventas por rango de fechas
+  - CancelSaleUseCase: Cancelar venta y revertir stock
+  - UpdateSaleUseCase: Actualizar datos de venta (solo antes de completar)
+
+### 5.7 Provider de Ventas
+- [ ] **5.7.1** Crear `lib/features/sales/presentation/providers/sales_provider.dart`
+  - Enum SalesState (initial, loading, loaded, error, creating, updating)
+  - Propiedades: sales (List<Sale>), stats (SalesStats), selectedDateRange, errorMessage
+  - Métodos de carga: loadSales(), loadTodaySales(), loadSalesByDateRange(start, end)
+  - Métodos CRUD: createSale(sale), updateSale(sale), cancelSale(saleId)
+  - Método loadStats() para estadísticas
+  - Método getSaleById(id) para obtener detalles
+  - Manejo de estados y errores con try-catch
+
+- [ ] **5.7.2** Crear `lib/features/sales/presentation/providers/sale_cart_provider.dart`
+  - Gestión del carrito de venta temporal
+  - Propiedades: items (List<SaleItem>), customer (CustomerInfo), paymentMethod, discount, notes
+  - Métodos: addItem(), removeItem(), updateQuantity(), clearCart()
+  - Getters calculados: subtotal, taxAmount, discountAmount, total, itemCount
+  - Validaciones: stock disponible, cantidades mínimas
+  - Método buildSale() para crear entity Sale desde el carrito
+
+### 5.8 Widgets de Ventas
+- [ ] **5.8.1** Crear `lib/features/sales/presentation/widgets/sale_card.dart`
+  - Card para lista de ventas con información resumida
+  - Mostrar: número de venta, fecha/hora, total, método de pago, cliente
+  - Badge de estado (completada, cancelada, reembolsada)
+  - Iconos según método de pago (efectivo, tarjeta, transferencia)
+  - Callback onTap para ver detalles
+  - Diseño responsive con colores distintivos
+
+- [ ] **5.8.2** Crear `lib/features/sales/presentation/widgets/sale_item_card.dart`
+  - Card para items dentro del carrito/detalle de venta
+  - Mostrar: nombre producto, variante (si aplica), cantidad, precio unitario, subtotal
+  - Indicador visual de color de variante
+  - Botones para ajustar cantidad (+/-)
+  - Botón eliminar item
+  - Mostrar descuento si aplica
+
+- [ ] **5.8.3** Crear `lib/features/sales/presentation/widgets/product_selector.dart`
+  - Widget para buscar y seleccionar productos
+  - Barra de búsqueda con filtrado en tiempo real
+  - Lista de productos disponibles con stock
+  - Mostrar variantes de color si el producto las tiene
+  - Selector de cantidad con validación de stock
+  - Botón "Agregar al carrito"
+  - Indicadores visuales de stock bajo/agotado
+
+- [ ] **5.8.4** Crear `lib/features/sales/presentation/widgets/payment_method_selector.dart`
+  - Selector visual de métodos de pago
+  - Chips/Cards con iconos para cada método (cash, card, transfer, other)
+  - Estado seleccionado visual
+  - Callback onChange
+
+- [ ] **5.8.5** Crear `lib/features/sales/presentation/widgets/sales_stats_card.dart`
+  - Tarjeta de estadísticas con iconos
+  - Mostrar: ventas totales, ingresos, ganancia, ticket promedio
+  - Formato de números con separadores de miles
+  - Colores distintivos por tipo de métrica
+  - Animaciones opcionales
+
+### 5.9 Pantallas de Ventas
+- [ ] **5.9.1** Crear `lib/features/sales/presentation/pages/sales_page.dart`
+  - AppBar con título "Ventas" y acciones (filtros, estadísticas)
+  - Panel de estadísticas del día (SalesStatsCard)
+  - Pestañas/Segmentos: "Hoy", "Esta Semana", "Este Mes", "Todas"
+  - Lista de ventas usando SaleCard
+  - Pull-to-refresh para recargar datos
+  - Estados: loading, error, empty
+  - FAB para crear nueva venta (navegar a NewSalePage)
+  - Selector de rango de fechas personalizado
+
+- [ ] **5.9.2** Crear `lib/features/sales/presentation/pages/new_sale_page.dart`
+  - AppBar con título "Nueva Venta" y botón cancelar
+  - Sección de productos: ProductSelector integrado
+  - Lista de items en carrito (SaleItemCard)
+  - Panel de resumen: subtotal, descuento, impuesto, total
+  - Sección de cliente (opcional): nombre, email, teléfono
+  - PaymentMethodSelector
+  - Campo de descuento (porcentaje o monto fijo)
+  - Campo de notas adicionales
+  - Botón "Completar Venta" (validación de carrito no vacío)
+  - Diálogo de confirmación antes de guardar
+  - Navegación a detalle de venta al completar
+
+- [ ] **5.9.3** Crear `lib/features/sales/presentation/pages/sale_detail_page.dart`
+  - AppBar con título "Detalle de Venta #XXXX"
+  - Header con información general: fecha, hora, vendedor, estado
+  - Sección de cliente (si existe)
+  - Lista de items vendidos (SaleItemCard en modo solo lectura)
+  - Resumen financiero: subtotal, descuento, impuesto, total
+  - Método de pago con icono
+  - Notas adicionales (si existen)
+  - Botón "Cancelar Venta" (solo si status = completed y fecha < 24h)
+  - Botón "Compartir" (futuro: generar PDF/recibo)
+  - Integración con DateFormat para fechas
+  - Integración con NumberFormat para montos
+
+### 5.10 Integración con Actividades Recientes
+- [ ] **5.10.1** Actualizar `lib/features/home/domain/entities/activity.dart`
+  - Agregar ActivityType: saleCreated, saleCancelled, saleRefunded
+  - Agregar campos opcionales para ventas: saleId, saleNumber, saleTotal, saleItems
+
+- [ ] **5.10.2** Actualizar `lib/features/home/data/datasources/firebase_activity_datasource.dart`
+  - Método logSaleActivity() para registrar venta
+  - Formato de mensaje: "Venta #SALE-XXX realizada por $userName - Total: $XX.XX"
+  - Incluir datos relevantes: número de venta, total, cantidad de items, método de pago
+
+- [ ] **5.10.3** Integrar registro de actividad en CreateSaleUseCase
+  - Llamar a logSaleActivity() después de crear venta exitosamente
+  - Manejar errores sin bloquear la creación de venta
+  - Registrar también cancelaciones de venta
+
+### 5.11 Actualización de Stock
+- [ ] **5.11.1** Crear lógica de reducción de stock en FirebaseSaleDataSource
+  - Al crear venta: reducir stock de cada producto/variante vendido
+  - Usar transacciones de Firestore para garantizar atomicidad
+  - Validar stock disponible antes de confirmar venta
+  - Revertir stock al cancelar venta
+
+- [ ] **5.11.2** Manejar productos con variantes
+  - Reducir stock de la variante específica seleccionada
+  - Si producto no tiene variantes, reducir stock general
+  - Actualizar campo totalStock del producto
+  - Validar que hasLowStock y isOutOfStock se actualicen correctamente
+
+### 5.12 Configuración e Integración
+- [ ] **5.12.1** Configurar SalesProvider en `lib/main.dart`
+  - Agregar imports de sales (SalesProvider, SaleRepository, etc.)
+  - Crear instancias de saleDataSource y saleRepository
+  - Agregar ChangeNotifierProvider<SalesProvider> al MultiProvider
+  - Agregar ChangeNotifierProvider<SaleCartProvider> al MultiProvider
+  - Inyectar los casos de uso necesarios
+
+- [ ] **5.12.2** Actualizar rutas en `lib/config/routes/app_routes.dart`
+  - Cambiar ruta '/camera' por '/sales' con SalesPage
+  - Agregar ruta '/sales/new' con NewSalePage
+  - Agregar ruta '/sales/:id' con SaleDetailPage (parámetro saleId)
+  - Actualizar navegación del BottomNavigationBar
+
+- [ ] **5.12.3** Actualizar `lib/features/home/presentation/pages/main_layout.dart`
+  - Cambiar icono y label de "Cámara" a "Ventas"
+  - Usar icono: Icons.point_of_sale o Icons.shopping_cart
+  - Actualizar índice de navegación
+  - Remover imports de camera_page.dart
+  - Agregar imports de sales_page.dart
+
+- [ ] **5.12.4** Actualizar reglas de Firestore para colección sales
+  ```javascript
+  match /sales/{saleId} {
+    allow read: if request.auth != null;
+    allow create: if request.auth != null && 
+      get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role in ['admin', 'manager', 'employee'];
+    allow update, delete: if request.auth != null && 
+      get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role in ['admin', 'manager'];
+  }
+  ```
+
+### 5.13 Características Adicionales
+- [ ] **5.13.1** Implementar generación de número de venta único
+  - Formato: SALE-YYYYMMDD-0001
+  - Autoincremental por día
+  - Consultar último número del día en Firestore
+  - Manejar concurrencia con transacciones
+
+- [ ] **5.13.2** Implementar cálculo de impuestos
+  - Configurar porcentaje de impuesto (configurable)
+  - Aplicar a subtotal después de descuento
+  - Mostrar desglose en resumen de venta
+
+- [ ] **5.13.3** Implementar validaciones de negocio
+  - Stock disponible antes de agregar al carrito
+  - Cantidades mínimas (>0) y máximas (stock disponible)
+  - Total de venta > 0
+  - Al menos un item en carrito para completar venta
+  - Validar que productos existan y estén activos
+
+- [ ] **5.13.4** Implementar búsqueda y filtros de ventas
+  - Buscar por número de venta
+  - Filtrar por rango de fechas
+  - Filtrar por método de pago
+  - Filtrar por vendedor
+  - Filtrar por cliente
+
+### 5.14 Documentación y Pruebas
+- [ ] **5.14.1** Crear `doc/sales_module.md` con documentación completa
+  - Arquitectura del módulo (Domain, Data, Presentation)
+  - Flujo de creación de venta paso a paso
+  - Estructura de datos en Firestore
+  - Diagramas de flujo
+  - Manejo de transacciones y stock
+  - Integración con productos y actividades
+
+- [ ] **5.14.2** Actualizar CHANGELOG.md con cambios de FASE 5
+  - Sección con módulo de ventas completo
+  - Detalles de funcionalidades
+  - Cambios en navegación (camera → sales)
+  - Integración con sistema de actividades
+
+- [ ] **5.14.3** Testing de funcionalidad
+  - Compilación exitosa sin errores
+  - Creación de venta reduce stock correctamente
+  - Cancelación de venta revierte stock
+  - Estadísticas calculan correctamente
+  - Validaciones de stock funcionan
+  - Registro en actividades recientes funciona
+  - Navegación entre pantallas funciona
+  - Estados loading/error/empty se muestran correctamente
+  - Formato de números y fechas correcto
+
+- [ ] **5.14.4** Actualizar README.md
+  - Agregar módulo de Ventas en características
+  - Actualizar capturas de pantalla
+  - Documentar funcionalidades de ventas
+  - Actualizar guía de uso
 
