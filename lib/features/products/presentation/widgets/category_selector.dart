@@ -56,7 +56,7 @@ class CategorySelector extends StatelessWidget {
   }) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
-    
+
     return FilterChip(
       label: Row(
         mainAxisSize: MainAxisSize.min,
@@ -64,9 +64,10 @@ class CategorySelector extends StatelessWidget {
           Icon(
             icon,
             size: 18,
-            color: isSelected 
-                ? ColorConstants.textOnPrimaryColor 
-                : ColorConstants.primaryColor,
+            color:
+                isSelected
+                    ? ColorConstants.textOnPrimaryColor
+                    : ColorConstants.primaryColor,
           ),
           const SizedBox(width: 6),
           Text(label),
@@ -74,23 +75,30 @@ class CategorySelector extends StatelessWidget {
       ),
       selected: isSelected,
       onSelected: (_) => onTap(),
-      selectedColor: ColorConstants.primaryColor, // Siempre rojo cuando seleccionado
-      backgroundColor: isDark 
-          ? ColorConstants.grey800 
-          : ColorConstants.grey200, // Gris oscuro en dark mode
+      selectedColor:
+          ColorConstants.primaryColor, // Siempre rojo cuando seleccionado
+      backgroundColor:
+          isDark
+              ? ColorConstants.grey800
+              : ColorConstants.grey200, // Gris oscuro en dark mode
       labelStyle: TextStyle(
-        color: isSelected 
-            ? ColorConstants.textOnPrimaryColor // Blanco cuando seleccionado
-            : (isDark ? ColorConstants.grey100 : ColorConstants.grey900), // Texto adaptativo
+        color:
+            isSelected
+                ? ColorConstants
+                    .textOnPrimaryColor // Blanco cuando seleccionado
+                : (isDark
+                    ? ColorConstants.grey100
+                    : ColorConstants.grey900), // Texto adaptativo
         fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
       ),
       checkmarkColor: ColorConstants.textOnPrimaryColor, // Check blanco
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(20),
         side: BorderSide(
-          color: isSelected 
-              ? ColorConstants.primaryColor 
-              : (isDark ? ColorConstants.grey700 : ColorConstants.grey300),
+          color:
+              isSelected
+                  ? ColorConstants.primaryColor
+                  : (isDark ? ColorConstants.grey700 : ColorConstants.grey300),
           width: isSelected ? 0 : 1,
         ),
       ),

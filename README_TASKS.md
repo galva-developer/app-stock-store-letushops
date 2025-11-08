@@ -442,3 +442,63 @@ Este documento detalla la implementación técnica completa del proyecto Stock L
   - Funcionalidades implementadas
   - Configuración realizada
 
+### 4.12 Optimizaciones y Correcciones
+- [x] **4.12.1** Corregir errores de índice compuesto en Firestore
+  - Remover `.orderBy()` después de `.where()` en getProductsByCategory()
+  - Remover `.orderBy()` después de `.where()` en getProductsByStatus()
+  - Remover `.orderBy()` después de `.where()` en getProductsByPriceRange()
+  - Remover `.orderBy()` después de `.where()` en getProductsByCreator()
+  - Implementar ordenamiento client-side con `.sort()` en los 4 métodos
+
+- [x] **4.12.2** Mejorar diseño responsive en HomePage
+  - Ajustar childAspectRatio de 1.5 a 1.3 en GridView de acciones rápidas
+  - Agregar maxLines: 2 y overflow: TextOverflow.ellipsis a textos de ActionCard
+
+- [x] **4.12.3** Optimizar botón de agregar producto
+  - Cambiar FloatingActionButton.extended a FloatingActionButton circular
+  - Usar ícono "+" con tamaño 28px
+  - Agregar tooltip "Agregar Producto"
+  - Configurar colores: backgroundColor y foregroundColor con ColorConstants
+
+### 4.13 Consistencia de Tema y Colores
+- [x] **4.13.1** Actualizar tema oscuro para consistencia de colores rojos
+  - Actualizar ColorScheme en darkTheme:
+    - primary: ColorConstants.primaryColor (#D32F2F)
+    - onPrimary: ColorConstants.textOnPrimaryColor (blanco)
+  - Actualizar appBarTheme en darkTheme:
+    - backgroundColor: ColorConstants.primaryColor
+    - foregroundColor, iconTheme, actionsIconTheme: blanco
+  - Agregar/actualizar temas de componentes en darkTheme:
+    - elevatedButtonTheme: backgroundColor primaryColor
+    - outlinedButtonTheme: foregroundColor primaryColor
+    - textButtonTheme: foregroundColor primaryColor
+    - floatingActionButtonTheme: backgroundColor primaryColor
+    - inputDecorationTheme: focusedBorder primaryColor
+    - bottomNavigationBarTheme: selectedItemColor primaryColor
+    - chipTheme: selectedColor primaryColor
+    - switchTheme: activeColor primaryColor
+    - checkboxTheme: fillColor primaryColor
+    - radioTheme: fillColor primaryColor
+    - progressIndicatorTheme: color primaryColor
+    - tabBarTheme: indicatorColor, labelColor primaryColor
+    - listTileTheme: selectedTileColor primaryColor con opacidad
+
+- [x] **4.13.2** Actualizar AppBar en páginas para usar ColorConstants
+  - ProductsPage: backgroundColor ColorConstants.primaryColor, foregroundColor textOnPrimaryColor
+  - CameraPage: backgroundColor ColorConstants.primaryColor, foregroundColor textOnPrimaryColor
+  - ProductDetailPage: backgroundColor ColorConstants.primaryColor, foregroundColor textOnPrimaryColor
+  - AddProductPage: Ya usa ElevatedButton con ColorConstants
+
+- [x] **4.13.3** Actualizar CategorySelector para consistencia en ambos modos
+  - Agregar detección de tema: `theme.brightness == Brightness.dark`
+  - selectedColor: ColorConstants.primaryColor (siempre rojo #D32F2F)
+  - backgroundColor: Adaptativo (grey800 en oscuro, grey200 en claro)
+  - Icon color: textOnPrimaryColor cuando seleccionado, primaryColor cuando no
+  - Label color: Adaptativo según tema
+  - checkmarkColor: blanco
+  - shape con bordes adaptativos
+
+- [x] **4.13.4** Actualizar títulos en ProductDetailPage
+  - _buildSectionTitle(): color ColorConstants.primaryColor (siempre rojo en ambos modos)
+  - Títulos afectados: "Descripción", "Precios", "Inventario", "Identificación", "Información Adicional", "Etiquetas", "Fechas"
+
