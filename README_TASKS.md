@@ -254,3 +254,191 @@ Este documento detalla la implementación técnica completa del proyecto Stock L
 - [x] **3.2.3** Implementar navegación con bottom navigation responsive
 - [x] **3.2.4** Configurar deep linking
 
+### 3.3 Layout Principal
+- [x] **3.3.1** Crear `lib/features/home/presentation/pages/main_layout.dart`
+- [x] **3.3.2** Implementar bottom navigation bar con iconos
+- [x] **3.3.3** Configurar transiciones entre pantallas
+- [x] **3.3.4** Crear `lib/features/home/presentation/pages/home_page.dart`
+
+### 3.4 Widgets Compartidos
+- [x] **3.4.1** Crear widgets de logo en `lib/shared/widgets/app_logo.dart`
+- [x] **3.4.2** Crear widgets de tema (ThemeToggleButton, ThemeSelector, ThemeDialog, ThemeSwitch, ThemeSettingsTile)
+- [x] **3.4.3** Implementar loading indicators personalizados
+- [x] **3.4.4** Crear widgets de error/empty state
+
+### 3.5 Providers Globales
+- [x] **3.5.1** Crear `lib/shared/providers/theme_provider.dart`
+- [x] **3.5.2** Implementar persistencia de preferencias de tema
+- [x] **3.5.3** Configurar MultiProvider en main.dart
+
+---
+
+## 📦 FASE 4: GESTIÓN DE PRODUCTOS
+**Objetivo**: Implementar módulo completo de productos con Clean Architecture
+
+### 4.1 Entidades de Dominio
+- [x] **4.1.1** Crear `lib/features/products/domain/entities/product.dart`
+  - Product class con 20+ campos (id, name, description, price, costPrice, stock, minStock, etc.)
+  - ProductCategory enum (electronics, clothing, food, beverages, homeAppliances, beauty, sports, toys, books, other)
+  - ProductStatus enum (active, inactive, discontinued)
+  - Getters: hasLowStock, isOutOfStock, isActive, profitMargin, primaryImage
+  - Método copyWith() para actualizaciones inmutables
+
+### 4.2 Modelos de Datos
+- [x] **4.2.1** Crear `lib/features/products/data/models/product_model.dart`
+  - Método fromFirestore() para convertir DocumentSnapshot a ProductModel
+  - Método toFirestore() para convertir ProductModel a Map para Firestore
+  - Método fromEntity() para convertir Product a ProductModel
+  - Método toEntity() para convertir ProductModel a Product
+  - Parsing seguro de enums (category, status)
+
+### 4.3 Repositorio de Dominio
+- [x] **4.3.1** Crear `lib/features/products/domain/repositories/product_repository.dart`
+  - Métodos CRUD: createProduct, getProductById, updateProduct, deleteProduct
+  - Métodos de búsqueda: getAllProducts, searchProducts
+  - Métodos de filtrado: getProductsByCategory, getProductsByPriceRange, getProductsByStatus, getLowStockProducts, getOutOfStockProducts
+  - Streams: watchProducts, watchProductsByCategory
+  - Estadísticas: getProductStats (clase ProductStats con totalProducts, lowStockProducts, outOfStockProducts, totalValue)
+
+### 4.4 Fuente de Datos Firebase
+- [x] **4.4.1** Crear `lib/features/products/data/datasources/firebase_product_datasource.dart`
+  - Configurar colección 'products' en Firestore
+  - Implementar getAllProducts() con ordenamiento por createdAt
+  - Implementar searchProducts() con filtrado client-side (toLowerCase, contains)
+  - Implementar getProductsByCategory() con query where
+  - Implementar getLowStockProducts() con filtrado client-side
+  - Implementar getOutOfStockProducts() con filtrado client-side
+  - Implementar CRUD: addProduct(), updateProduct(), deleteProduct()
+  - Implementar streams para actualizaciones en tiempo real
+
+### 4.5 Implementación del Repositorio
+- [x] **4.5.1** Crear `lib/features/products/data/repositories/product_repository_impl.dart`
+  - Implementar todos los métodos de ProductRepository
+  - Delegar operaciones al FirebaseProductDataSource
+  - Calcular estadísticas agregadas en getProductStats()
+  - Manejar excepciones y errores
+
+### 4.6 Casos de Uso
+- [x] **4.6.1** Crear `lib/features/products/domain/usecases/product_usecases.dart`
+  - CreateProductUseCase: Crear nuevo producto en Firestore
+  - UpdateProductUseCase: Actualizar producto existente
+  - DeleteProductUseCase: Eliminar producto por ID
+  - GetAllProductsUseCase: Obtener lista de todos los productos
+  - SearchProductsUseCase: Buscar productos por query (nombre/descripción)
+  - GetProductsByCategoryUseCase: Filtrar productos por categoría
+  - GetLowStockProductsUseCase: Obtener productos con stock bajo
+  - GetProductStatsUseCase: Obtener estadísticas del inventario
+
+### 4.7 Provider de Productos
+- [x] **4.7.1** Crear `lib/features/products/presentation/providers/products_provider.dart`
+  - Enum ProductsState (initial, loading, loaded, error, updating, deleting)
+  - Propiedades: products (List<Product>), stats (ProductStats), filterCategory, errorMessage
+  - Métodos de carga: loadProducts(), searchProducts(query), filterByCategory(category)
+  - Métodos CRUD: createProduct(product), updateProduct(product), deleteProduct(productId)
+  - Método loadStats() para estadísticas
+  - Manejo de estados y errores con try-catch
+
+### 4.8 Widgets de Productos
+- [x] **4.8.1** Crear `lib/features/products/presentation/widgets/product_card.dart`
+  - Card reutilizable para lista de productos
+  - Mostrar imagen del producto (network con placeholder)
+  - Mostrar nombre, precio, stock
+  - Badges de estado según stock (🔴 agotado, 🟠 bajo, 🟢 OK)
+  - Botones de acción: editar, eliminar
+  - Callback onTap para navegar a detalle
+  - Diseño responsive horizontal
+
+- [x] **4.8.2** Crear `lib/features/products/presentation/widgets/category_selector.dart`
+  - Selector horizontal de categorías con scroll
+  - FilterChip para cada categoría
+  - Opción "Todos" para quitar filtro
+  - Iconos personalizados por categoría (devices, checkroom, restaurant, etc.)
+  - Integración con ProductsProvider para filtrado
+  - Estado isSelected visual
+
+### 4.9 Pantallas de Productos
+- [x] **4.9.1** Crear `lib/features/products/presentation/pages/products_page.dart`
+  - AppBar con título "Productos" y botón de actualizar
+  - Integración con ThemeProvider para modo oscuro
+  - Barra de búsqueda con TextField y botón de limpiar
+  - CategorySelector para filtrado por categoría
+  - Panel de estadísticas rápidas (total, stock bajo, agotados) con iconos
+  - ListView de productos usando ProductCard
+  - Pull-to-refresh para recargar datos
+  - Estados: loading (CircularProgressIndicator), error, empty
+  - FAB para agregar productos
+  - Diálogo de confirmación para eliminar
+
+- [x] **4.9.2** Crear `lib/features/products/presentation/pages/add_product_page.dart`
+  - Formulario completo para crear/editar productos
+  - Modo dual: creación (productToEdit == null) o edición
+  - Secciones del formulario:
+    - Información Básica: nombre*, descripción
+    - Clasificación: categoría* (dropdown), estado* (dropdown)
+    - Precios: precio de venta*, precio de costo
+    - Inventario: stock actual*, stock mínimo
+    - Identificación: SKU, código de barras
+    - Información Adicional: marca, fabricante
+    - Etiquetas: tags separados por comas
+  - Validación de campos requeridos
+  - TextFormField personalizados con iconos
+  - Botones: Cancelar, Guardar/Actualizar
+  - Estado de carga durante guardado (CircularProgressIndicator)
+  - SnackBar para feedback de éxito/error
+  - Navegación automática al completar
+
+- [x] **4.9.3** Crear `lib/features/products/presentation/pages/product_detail_page.dart`
+  - AppBar con acciones: editar, eliminar
+  - Imagen del producto en contenedor de 250px (o placeholder)
+  - Header con nombre y badge de estado (Active/Inactive/Discontinued)
+  - Chip de categoría con icono
+  - Descripción del producto
+  - Tarjetas informativas organizadas por sección:
+    - Precios: precio venta, precio costo, margen de ganancia (%)
+    - Inventario: stock actual, stock mínimo
+    - Identificación: SKU, código de barras
+    - Información Adicional: marca, fabricante
+    - Etiquetas: chips coloridos
+    - Fechas: creación, última actualización
+  - Alertas visuales de stock (Container con borde y fondo coloreado)
+  - Diálogo de confirmación para eliminar
+  - Navegación a AddProductPage para editar
+  - Integración con DateFormat e intl para fechas
+  - Integración con NumberFormat para precios
+
+### 4.10 Configuración e Integración
+- [x] **4.10.1** Configurar ProductsProvider en `lib/main.dart`
+  - Agregar imports de products (ProductsProvider, ProductRepository, etc.)
+  - Crear instancias de productDataSource y productRepository
+  - Agregar ChangeNotifierProvider<ProductsProvider> al MultiProvider
+  - Inyectar los 8 use cases al ProductsProvider
+
+- [x] **4.10.2** Configurar rutas de productos en `lib/config/routes/app_routes.dart`
+  - Ruta '/products' ya configurada con ProductsPage
+  - Navegación programática a AddProductPage (con/sin productToEdit)
+  - Navegación programática a ProductDetailPage (con product)
+
+- [x] **4.10.3** Actualizar reglas de Firestore para colección products
+  ```javascript
+  match /products/{productId} {
+    allow read: if request.auth != null;
+    allow write: if request.auth != null && 
+      get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role in ['admin', 'manager'];
+  }
+  ```
+
+### 4.11 Documentación
+- [x] **4.11.1** Crear `doc/products_module.md` con documentación completa
+  - Arquitectura del módulo (Domain, Data, Presentation)
+  - Estructura de datos en Firestore
+  - Flujo de casos de uso
+  - Características implementadas
+  - Pendientes y mejoras futuras
+  - Configuración requerida
+
+- [x] **4.11.2** Actualizar CHANGELOG.md con cambios de FASE 4
+  - Sección "Unreleased" con módulo de productos completo
+  - Detalles de cada capa (Domain, Data, Presentation)
+  - Funcionalidades implementadas
+  - Configuración realizada
+

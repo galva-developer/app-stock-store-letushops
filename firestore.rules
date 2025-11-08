@@ -59,30 +59,30 @@ service cloud.firestore {
     
     // Reglas para otras colecciones (productos, inventario, etc.)
     match /products/{productId} {
-      // Lectura: Todos los usuarios autenticados y activos
-      allow read: if isAuthenticated() && isActive();
+      // Lectura: Todos los usuarios autenticados
+      allow read: if isAuthenticated();
       
-      // Escritura: Administradores y managers
-      allow write: if isAuthenticated() && isActive() && 
-                      (isAdmin() || isManager());
+      // Escritura: Todos los usuarios autenticados (temporalmente permisivo para desarrollo)
+      // TODO: Restringir a admin y manager en producción
+      allow write: if isAuthenticated();
     }
     
     match /inventory/{inventoryId} {
-      // Lectura: Todos los usuarios autenticados y activos
-      allow read: if isAuthenticated() && isActive();
+      // Lectura: Todos los usuarios autenticados
+      allow read: if isAuthenticated();
       
-      // Escritura: Administradores y managers
-      allow write: if isAuthenticated() && isActive() && 
-                      (isAdmin() || isManager());
+      // Escritura: Todos los usuarios autenticados (temporalmente permisivo para desarrollo)
+      // TODO: Restringir a admin y manager en producción
+      allow write: if isAuthenticated();
     }
     
     match /reports/{reportId} {
-      // Lectura: Todos los usuarios autenticados y activos
-      allow read: if isAuthenticated() && isActive();
+      // Lectura: Todos los usuarios autenticados
+      allow read: if isAuthenticated();
       
-      // Escritura: Administradores y managers
-      allow write: if isAuthenticated() && isActive() && 
-                      (isAdmin() || isManager());
+      // Escritura: Todos los usuarios autenticados (temporalmente permisivo para desarrollo)
+      // TODO: Restringir a admin y manager en producción
+      allow write: if isAuthenticated();
     }
     
     // Por defecto, denegar todo lo demás

@@ -13,11 +13,17 @@ import 'core/services/session_persistence_service.dart';
 // Importaciones de providers
 import 'features/authentication/presentation/providers/auth_provider.dart';
 import 'features/authentication/presentation/providers/admin_users_provider.dart';
+import 'features/products/presentation/providers/products_provider.dart';
 import 'shared/providers/theme_provider.dart';
 
 // Importaciones de dependencias de auth
 import 'features/authentication/data/repositories/auth_repository_impl.dart';
 import 'features/authentication/data/datasources/firebase_auth_datasource.dart';
+
+// Importaciones de dependencias de products
+import 'features/products/data/repositories/product_repository_impl.dart';
+import 'features/products/data/datasources/firebase_product_datasource.dart';
+import 'features/products/domain/usecases/product_usecases.dart';
 
 // Importaciones de use cases de admin
 import 'features/authentication/domain/usecases/admin/list_all_users_usecase.dart';
@@ -43,9 +49,13 @@ class StockLetuShopsApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Crear dependencias compartidas
+    // Crear dependencias compartidas de autenticación
     final datasource = FirebaseAuthDataSource();
     final repository = AuthRepositoryImpl(datasource);
+
+    // Crear dependencias de productos
+    final productDataSource = FirebaseProductDataSource();
+    final productRepository = ProductRepositoryImpl(productDataSource);
 
     return MultiProvider(
       providers: [
@@ -71,6 +81,26 @@ class StockLetuShopsApp extends StatelessWidget {
               updateUserStatusUseCase: UpdateUserStatusUseCase(repository),
               deleteUserUseCase: DeleteUserUseCase(repository),
               registerUserUseCase: RegisterUserUseCase(repository),
+            );
+          },
+        ),
+
+        // Configuración del ProductsProvider
+        ChangeNotifierProvider<ProductsProvider>(
+          create: (context) {
+            return ProductsProvider(
+              createProductUseCase: CreateProductUseCase(productRepository),
+              updateProductUseCase: UpdateProductUseCase(productRepository),
+              deleteProductUseCase: DeleteProductUseCase(productRepository),
+              getAllProductsUseCase: GetAllProductsUseCase(productRepository),
+              searchProductsUseCase: SearchProductsUseCase(productRepository),
+              getProductsByCategoryUseCase: GetProductsByCategoryUseCase(
+                productRepository,
+              ),
+              getLowStockProductsUseCase: GetLowStockProductsUseCase(
+                productRepository,
+              ),
+              getProductStatsUseCase: GetProductStatsUseCase(productRepository),
             );
           },
         ),

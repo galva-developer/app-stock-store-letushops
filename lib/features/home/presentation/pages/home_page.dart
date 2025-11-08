@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import '../../../authentication/presentation/providers/auth_provider.dart';
+import '../../../products/presentation/pages/add_product_page.dart';
+import '../../../products/presentation/providers/products_provider.dart';
 import '../../../../shared/providers/theme_provider.dart';
 
 /// Muestra un diálogo de confirmación antes de cerrar sesión
@@ -54,8 +56,22 @@ void _showLogoutConfirmation(BuildContext context) {
 }
 
 /// Página principal del dashboard/home de la aplicación
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   const HomePage({super.key});
+
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  @override
+  void initState() {
+    super.initState();
+    // Cargar productos y estadísticas al iniciar
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<ProductsProvider>().loadProducts();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -66,6 +82,14 @@ class HomePage extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Inicio'),
         actions: [
+          // Botón para actualizar datos
+          IconButton(
+            icon: const Icon(Icons.refresh),
+            onPressed: () {
+              context.read<ProductsProvider>().loadProducts();
+            },
+            tooltip: 'Actualizar',
+          ),
           // Botón para cambiar tema
           Consumer<ThemeProvider>(
             builder: (context, themeProvider, _) {
@@ -179,26 +203,32 @@ class HomePage extends StatelessWidget {
   }
 
   Widget _buildQuickStats(BuildContext context) {
-    return Row(
-      children: [
-        Expanded(
-          child: _StatCard(
-            title: 'Productos',
-            value: '0',
-            icon: Icons.inventory_2,
-            color: Colors.blue,
-          ),
-        ),
-        const SizedBox(width: 12),
-        Expanded(
-          child: _StatCard(
-            title: 'Stock Bajo',
-            value: '0',
-            icon: Icons.warning,
-            color: Colors.orange,
-          ),
-        ),
-      ],
+    return Consumer<ProductsProvider>(
+      builder: (context, productsProvider, child) {
+        final stats = productsProvider.stats;
+
+        return Row(
+          children: [
+            Expanded(
+              child: _StatCard(
+                title: 'Productos',
+                value: stats != null ? stats.totalProducts.toString() : '0',
+                icon: Icons.inventory_2,
+                color: Colors.blue,
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: _StatCard(
+                title: 'Stock Bajo',
+                value: stats != null ? stats.lowStockProducts.toString() : '0',
+                icon: Icons.warning,
+                color: Colors.orange,
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 
@@ -215,8 +245,15 @@ class HomePage extends StatelessWidget {
           title: 'Agregar Producto',
           icon: Icons.add_box,
           color: Colors.green,
-          onTap: () {
-            // TODO: Navigate to add product
+          onTap: () async {
+            await Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const AddProductPage()),
+            );
+            // Recargar productos cuando regrese
+            if (context.mounted) {
+              context.read<ProductsProvider>().loadProducts();
+            }
           },
         ),
         _ActionCard(
@@ -224,7 +261,7 @@ class HomePage extends StatelessWidget {
           icon: Icons.camera_alt,
           color: Colors.purple,
           onTap: () {
-            // TODO: Navigate to camera
+            context.go('/camera');
           },
         ),
         _ActionCard(
@@ -232,7 +269,7 @@ class HomePage extends StatelessWidget {
           icon: Icons.store,
           color: Colors.blue,
           onTap: () {
-            // TODO: Navigate to inventory
+            context.go('/inventory');
           },
         ),
         _ActionCard(
@@ -240,7 +277,7 @@ class HomePage extends StatelessWidget {
           icon: Icons.analytics,
           color: Colors.orange,
           onTap: () {
-            // TODO: Navigate to reports
+            context.go('/reports');
           },
         ),
       ],
