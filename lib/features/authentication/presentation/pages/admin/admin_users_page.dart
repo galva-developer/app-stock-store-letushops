@@ -6,6 +6,7 @@ import '../../providers/auth_provider.dart';
 import '../../widgets/admin/user_list_item.dart';
 import '../../widgets/admin/register_user_dialog.dart';
 import '../../../../../shared/providers/theme_provider.dart';
+import '../../../../../core/constants/color_constants.dart';
 
 /// Pantalla de administración de usuarios
 ///
@@ -48,8 +49,8 @@ class _AdminUsersPageState extends State<AdminUsersPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Gestión de Usuarios'),
-        backgroundColor: Theme.of(context).primaryColor,
-        foregroundColor: Colors.white,
+        backgroundColor: ColorConstants.primaryColor,
+        foregroundColor: ColorConstants.textOnPrimaryColor,
         elevation: 0,
         actions: [
           // Botón para cambiar tema

@@ -1,5 +1,44 @@
 import 'package:equatable/equatable.dart';
 
+/// Variante de color de un producto
+///
+/// Representa una variante de color específica de un producto
+/// con su propio stock independiente
+class ProductVariant extends Equatable {
+  final String colorName; // Nombre del color (ej: "Rojo", "Azul Marino")
+  final String colorHex; // Código hexadecimal del color (ej: "#FF0000")
+  final int stock; // Stock disponible de esta variante
+  final String? sku; // SKU específico para esta variante (opcional)
+
+  const ProductVariant({
+    required this.colorName,
+    required this.colorHex,
+    required this.stock,
+    this.sku,
+  });
+
+  /// Crea una copia de la variante con campos actualizados
+  ProductVariant copyWith({
+    String? colorName,
+    String? colorHex,
+    int? stock,
+    String? sku,
+  }) {
+    return ProductVariant(
+      colorName: colorName ?? this.colorName,
+      colorHex: colorHex ?? this.colorHex,
+      stock: stock ?? this.stock,
+      sku: sku ?? this.sku,
+    );
+  }
+
+  @override
+  List<Object?> get props => [colorName, colorHex, stock, sku];
+
+  @override
+  String toString() => 'ProductVariant(color: $colorName, stock: $stock)';
+}
+
 /// Categorías de productos disponibles en el sistema
 enum ProductCategory {
   electronics,
@@ -67,7 +106,7 @@ class Product extends Equatable {
   final String description;
   final double price;
   final double? costPrice; // Precio de costo (opcional)
-  final int stock;
+  final int stock; // Stock total (calculado automáticamente si hay variantes)
   final int minStock; // Stock mínimo para alerta
   final ProductCategory category;
   final ProductStatus status;
@@ -78,6 +117,7 @@ class Product extends Equatable {
   final String? manufacturer;
   final Map<String, dynamic>? specifications; // Especificaciones adicionales
   final List<String> tags; // Etiquetas para búsqueda
+  final List<ProductVariant> variants; // Variantes de color del producto
   final DateTime createdAt;
   final DateTime updatedAt;
   final String createdBy; // ID del usuario que creó el producto
@@ -100,17 +140,29 @@ class Product extends Equatable {
     this.manufacturer,
     this.specifications,
     this.tags = const [],
+    this.variants = const [], // Variantes de color (vacío por defecto)
     required this.createdAt,
     required this.updatedAt,
     required this.createdBy,
     this.lastModifiedBy,
   });
 
+  /// Verifica si el producto tiene variantes de color
+  bool get hasVariants => variants.isNotEmpty;
+
+  /// Obtiene el stock total (suma de todas las variantes si existen, o stock directo)
+  int get totalStock {
+    if (hasVariants) {
+      return variants.fold<int>(0, (sum, variant) => sum + variant.stock);
+    }
+    return stock;
+  }
+
   /// Verifica si el producto tiene stock bajo
-  bool get hasLowStock => stock <= minStock;
+  bool get hasLowStock => totalStock <= minStock;
 
   /// Verifica si el producto está agotado
-  bool get isOutOfStock => stock == 0;
+  bool get isOutOfStock => totalStock == 0;
 
   /// Verifica si el producto está activo
   bool get isActive => status == ProductStatus.active;
@@ -142,6 +194,7 @@ class Product extends Equatable {
     String? manufacturer,
     Map<String, dynamic>? specifications,
     List<String>? tags,
+    List<ProductVariant>? variants,
     DateTime? createdAt,
     DateTime? updatedAt,
     String? createdBy,
@@ -164,6 +217,7 @@ class Product extends Equatable {
       manufacturer: manufacturer ?? this.manufacturer,
       specifications: specifications ?? this.specifications,
       tags: tags ?? this.tags,
+      variants: variants ?? this.variants,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
       createdBy: createdBy ?? this.createdBy,
@@ -189,6 +243,7 @@ class Product extends Equatable {
     manufacturer,
     specifications,
     tags,
+    variants,
     createdAt,
     updatedAt,
     createdBy,
@@ -197,5 +252,5 @@ class Product extends Equatable {
 
   @override
   String toString() =>
-      'Product(id: $id, name: $name, stock: $stock, price: $price)';
+      'Product(id: $id, name: $name, stock: $totalStock, price: $price, variants: ${variants.length})';
 }

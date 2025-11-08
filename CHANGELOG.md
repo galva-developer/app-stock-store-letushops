@@ -7,6 +7,54 @@ y este proyecto adhiere a [Semantic Versioning](https://semver.org/lang/es/).
 
 ## [Unreleased]
 
+### Agregado
+- **Sistema de Variantes de Color para Productos:** Implementada funcionalidad completa para gestionar productos con múltiples colores y stock independiente por variante:
+  - **ProductVariant Entity:** Nueva entidad con campos colorName, colorHex, stock y sku opcional
+  - **VariantManager Widget:** Componente interactivo para agregar, editar y eliminar variantes de color:
+    - Selector visual de 15 colores predefinidos comunes
+    - Validación de campos requeridos (nombre, color, stock)
+    - Cálculo automático de stock total
+    - Vista de lista con indicadores visuales de color
+    - Soporte para SKU específico por variante
+  - **Integración en AddProductPage:**
+    - Campo de stock se deshabilita automáticamente si hay variantes
+    - Stock total se calcula desde las variantes
+    - Carga de variantes existentes al editar producto
+  - **Visualización en ProductDetailPage:**
+    - Nueva sección "Variantes de Color" con lista detallada
+    - Indicador de stock total vs stock por variante
+    - Vista de color con hex code visual
+    - Información de SKU por variante (si existe)
+  - **Mejoras en ProductCard:**
+    - Badge indicador de cantidad de variantes (ícono paleta + número)
+    - Muestra stock total calculado de todas las variantes
+    - Indicador visual de productos con múltiples colores
+  - **Lógica de Stock Actualizada:**
+    - Getters `hasVariants`, `totalStock` en Product entity
+    - `hasLowStock` e `isOutOfStock` usan stock total de variantes
+    - Serialización completa en ProductModel y ProductVariantModel
+    - Soporte en Firestore con campo `variants` tipo array
+
+### Mejorado
+- **AppBar consistente en toda la aplicación:** Todas las barras superiores ahora usan ColorConstants.primaryColor (#D32F2F) con texto blanco en ambos modos (claro y oscuro):
+  - AddProductPage: AppBar rojo con texto blanco
+  - HomePage: AppBar rojo con texto blanco
+  - InventoryPage: AppBar rojo con texto blanco
+  - ReportsPage: AppBar rojo con texto blanco
+  - AdminUsersPage: AppBar rojo con texto blanco
+  - ForgotPasswordPage: AppBar rojo con texto blanco (antes: blanco con texto negro)
+  - ProductsPage, ProductDetailPage, CameraPage: Ya tenían AppBar rojo
+- **Títulos de sección en modo oscuro (AddProductPage):** Los títulos de sección ahora usan ColorConstants.primaryColor (#D32F2F) en lugar de Theme.of(context).primaryColor:
+  - Títulos visibles en modo oscuro (antes: mismo color del fondo)
+  - Color rojo consistente (#D32F2F) en ambos modos
+  - Títulos afectados: "Información Básica", "Precios", "Inventario", "Identificación", "Información Adicional"
+- **ProductCard - Precio y variantes siempre rojos:** El precio y el indicador de variantes de color ahora usan ColorConstants.primaryColor:
+  - Precio del producto: Rojo (#D32F2F) en ambos modos (antes: color variable según tema)
+  - Badge de variantes: Rojo (#D32F2F) en ambos modos con icono de paleta
+  - Mejor contraste y visibilidad en modo oscuro
+  - Consistencia visual con el resto de la aplicación
+- **Iconos consistentes:** Iconos en diálogos ahora usan ColorConstants.primaryColor para consistencia visual
+
 ### Corregido
 - **ProductDetailPage - AppBar y títulos siempre rojos:** La página de detalle del producto ahora mantiene consistencia de colores en ambos modos:
   - AppBar: Fondo rojo (#D32F2F) con texto blanco en modo claro y oscuro

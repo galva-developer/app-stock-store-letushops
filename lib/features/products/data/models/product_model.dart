@@ -1,6 +1,63 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../domain/entities/product.dart';
 
+/// Modelo de datos para ProductVariant
+///
+/// Maneja la conversión de variantes entre dominio y Firestore
+class ProductVariantModel {
+  final String colorName;
+  final String colorHex;
+  final int stock;
+  final String? sku;
+
+  ProductVariantModel({
+    required this.colorName,
+    required this.colorHex,
+    required this.stock,
+    this.sku,
+  });
+
+  /// Convierte desde Map de Firestore
+  factory ProductVariantModel.fromMap(Map<String, dynamic> data) {
+    return ProductVariantModel(
+      colorName: data['colorName'] as String? ?? '',
+      colorHex: data['colorHex'] as String? ?? '#000000',
+      stock: data['stock'] as int? ?? 0,
+      sku: data['sku'] as String?,
+    );
+  }
+
+  /// Convierte a Map para Firestore
+  Map<String, dynamic> toMap() {
+    return {
+      'colorName': colorName,
+      'colorHex': colorHex,
+      'stock': stock,
+      'sku': sku,
+    };
+  }
+
+  /// Convierte desde la entidad de dominio
+  factory ProductVariantModel.fromEntity(ProductVariant variant) {
+    return ProductVariantModel(
+      colorName: variant.colorName,
+      colorHex: variant.colorHex,
+      stock: variant.stock,
+      sku: variant.sku,
+    );
+  }
+
+  /// Convierte a la entidad de dominio
+  ProductVariant toEntity() {
+    return ProductVariant(
+      colorName: colorName,
+      colorHex: colorHex,
+      stock: stock,
+      sku: sku,
+    );
+  }
+}
+
 /// Modelo de datos para Product
 ///
 /// Maneja la conversión entre la entidad de dominio y Firestore
@@ -21,6 +78,7 @@ class ProductModel {
   final String? manufacturer;
   final Map<String, dynamic>? specifications;
   final List<String> tags;
+  final List<ProductVariantModel> variants;
   final Timestamp createdAt;
   final Timestamp updatedAt;
   final String createdBy;
@@ -43,6 +101,7 @@ class ProductModel {
     this.manufacturer,
     this.specifications,
     required this.tags,
+    this.variants = const [],
     required this.createdAt,
     required this.updatedAt,
     required this.createdBy,
@@ -52,6 +111,16 @@ class ProductModel {
   /// Convierte desde Firestore DocumentSnapshot
   factory ProductModel.fromFirestore(DocumentSnapshot doc) {
     final data = doc.data() as Map<String, dynamic>;
+
+    // Parsear variantes
+    final List<ProductVariantModel> variants = [];
+    if (data['variants'] != null && data['variants'] is List) {
+      for (final variantData in (data['variants'] as List)) {
+        if (variantData is Map<String, dynamic>) {
+          variants.add(ProductVariantModel.fromMap(variantData));
+        }
+      }
+    }
 
     return ProductModel(
       id: doc.id,
@@ -70,6 +139,7 @@ class ProductModel {
       manufacturer: data['manufacturer'] as String?,
       specifications: data['specifications'] as Map<String, dynamic>?,
       tags: (data['tags'] as List<dynamic>?)?.cast<String>() ?? [],
+      variants: variants,
       createdAt: data['createdAt'] as Timestamp? ?? Timestamp.now(),
       updatedAt: data['updatedAt'] as Timestamp? ?? Timestamp.now(),
       createdBy: data['createdBy'] as String? ?? '',
@@ -95,6 +165,7 @@ class ProductModel {
       'manufacturer': manufacturer,
       'specifications': specifications,
       'tags': tags,
+      'variants': variants.map((v) => v.toMap()).toList(),
       'createdAt': createdAt,
       'updatedAt': updatedAt,
       'createdBy': createdBy,
@@ -121,6 +192,10 @@ class ProductModel {
       manufacturer: product.manufacturer,
       specifications: product.specifications,
       tags: product.tags,
+      variants:
+          product.variants
+              .map((v) => ProductVariantModel.fromEntity(v))
+              .toList(),
       createdAt: Timestamp.fromDate(product.createdAt),
       updatedAt: Timestamp.fromDate(product.updatedAt),
       createdBy: product.createdBy,
@@ -147,6 +222,7 @@ class ProductModel {
       manufacturer: manufacturer,
       specifications: specifications,
       tags: tags,
+      variants: variants.map((v) => v.toEntity()).toList(),
       createdAt: createdAt.toDate(),
       updatedAt: updatedAt.toDate(),
       createdBy: createdBy,

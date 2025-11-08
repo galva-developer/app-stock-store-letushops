@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../domain/entities/product.dart';
+import '../../../../core/constants/color_constants.dart';
 
 /// Card para mostrar información de un producto
 class ProductCard extends StatelessWidget {
@@ -68,7 +69,7 @@ class ProductCard extends StatelessWidget {
                           style: TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
-                            color: Theme.of(context).primaryColor,
+                            color: ColorConstants.primaryColor,
                           ),
                         ),
                         const Spacer(),
@@ -136,36 +137,75 @@ class ProductCard extends StatelessWidget {
       icon = Icons.error_outline;
     } else if (product.hasLowStock) {
       badgeColor = Colors.orange;
-      badgeText = 'Stock Bajo: ${product.stock}';
+      badgeText =
+          product.hasVariants
+              ? 'Bajo: ${product.totalStock}'
+              : 'Stock Bajo: ${product.totalStock}';
       icon = Icons.warning_amber;
     } else {
       badgeColor = Colors.green;
-      badgeText = 'Stock: ${product.stock}';
+      badgeText = 'Stock: ${product.totalStock}';
       icon = Icons.check_circle_outline;
     }
 
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-      decoration: BoxDecoration(
-        color: badgeColor.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: badgeColor),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(icon, size: 14, color: badgeColor),
-          const SizedBox(width: 4),
-          Text(
-            badgeText,
-            style: TextStyle(
-              fontSize: 12,
-              fontWeight: FontWeight.w600,
-              color: badgeColor,
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        // Indicador de variantes (si tiene)
+        if (product.hasVariants) ...[
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+            decoration: BoxDecoration(
+              color: ColorConstants.primaryColor.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(
+                  Icons.palette,
+                  size: 12,
+                  color: ColorConstants.primaryColor,
+                ),
+                const SizedBox(width: 4),
+                Text(
+                  '${product.variants.length}',
+                  style: TextStyle(
+                    fontSize: 11,
+                    fontWeight: FontWeight.w600,
+                    color: ColorConstants.primaryColor,
+                  ),
+                ),
+              ],
             ),
           ),
+          const SizedBox(width: 8),
         ],
-      ),
+        // Badge de stock
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+          decoration: BoxDecoration(
+            color: badgeColor.withOpacity(0.1),
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: badgeColor),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(icon, size: 14, color: badgeColor),
+              const SizedBox(width: 4),
+              Text(
+                badgeText,
+                style: TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
+                  color: badgeColor,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
     );
   }
 

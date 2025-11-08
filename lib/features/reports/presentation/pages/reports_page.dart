@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../core/constants/color_constants.dart';
 
 /// Página de reportes y estadísticas
 class ReportsPage extends StatelessWidget {
@@ -9,6 +10,8 @@ class ReportsPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Reportes'),
+        backgroundColor: ColorConstants.primaryColor,
+        foregroundColor: ColorConstants.textOnPrimaryColor,
         actions: [
           IconButton(
             icon: const Icon(Icons.date_range),

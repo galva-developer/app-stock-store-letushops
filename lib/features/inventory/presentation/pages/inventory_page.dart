@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../core/constants/color_constants.dart';
 
 /// Página de gestión de inventario
 class InventoryPage extends StatelessWidget {
@@ -9,6 +10,8 @@ class InventoryPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Inventario'),
+        backgroundColor: ColorConstants.primaryColor,
+        foregroundColor: ColorConstants.textOnPrimaryColor,
         actions: [
           IconButton(
             icon: const Icon(Icons.refresh),

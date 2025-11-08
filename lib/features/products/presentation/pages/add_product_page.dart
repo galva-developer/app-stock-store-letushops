@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../../domain/entities/product.dart';
 import '../providers/products_provider.dart';
 import '../../../../core/constants/color_constants.dart';
+import '../widgets/variant_manager.dart';
 
 /// Página para agregar o editar un producto
 class AddProductPage extends StatefulWidget {
@@ -31,6 +32,7 @@ class _AddProductPageState extends State<AddProductPage> {
 
   ProductCategory _selectedCategory = ProductCategory.other;
   ProductStatus _selectedStatus = ProductStatus.active;
+  List<ProductVariant> _variants = []; // Lista de variantes de color
   bool _isSaving = false;
   String _currentUserId = 'admin'; // TODO: Get from auth
 
@@ -59,6 +61,7 @@ class _AddProductPageState extends State<AddProductPage> {
     _tagsController.text = product.tags.join(', ');
     _selectedCategory = product.category;
     _selectedStatus = product.status;
+    _variants = List.from(product.variants); // Cargar variantes existentes
     _currentUserId = product.createdBy;
   }
 
@@ -83,8 +86,8 @@ class _AddProductPageState extends State<AddProductPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(_isEditing ? 'Editar Producto' : 'Agregar Producto'),
-        backgroundColor: Theme.of(context).primaryColor,
-        foregroundColor: Colors.white,
+        backgroundColor: ColorConstants.primaryColor,
+        foregroundColor: ColorConstants.textOnPrimaryColor,
       ),
       body: Form(
         key: _formKey,
@@ -182,11 +185,15 @@ class _AddProductPageState extends State<AddProductPage> {
                 Expanded(
                   child: _buildTextField(
                     controller: _stockController,
-                    label: 'Stock Actual *',
+                    label:
+                        _variants.isEmpty ? 'Stock Actual *' : 'Stock Actual',
                     icon: Icons.inventory,
                     keyboardType: TextInputType.number,
                     inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                     validator: (value) {
+                      // Si hay variantes, el stock se calcula automáticamente
+                      if (_variants.isNotEmpty) return null;
+
                       if (value == null || value.isEmpty) {
                         return 'El stock es requerido';
                       }
@@ -195,6 +202,11 @@ class _AddProductPageState extends State<AddProductPage> {
                       }
                       return null;
                     },
+                    enabled: _variants.isEmpty, // Deshabilitar si hay variantes
+                    hint:
+                        _variants.isNotEmpty
+                            ? 'Se calcula desde variantes'
+                            : null,
                   ),
                 ),
                 const SizedBox(width: 16),
@@ -208,6 +220,25 @@ class _AddProductPageState extends State<AddProductPage> {
                   ),
                 ),
               ],
+            ),
+            const SizedBox(height: 16),
+
+            // Gestor de variantes
+            VariantManager(
+              initialVariants: _variants,
+              onVariantsChanged: (variants) {
+                setState(() {
+                  _variants = variants;
+                  // Actualizar el stock automáticamente si hay variantes
+                  if (_variants.isNotEmpty) {
+                    final totalStock = _variants.fold<int>(
+                      0,
+                      (sum, variant) => sum + variant.stock,
+                    );
+                    _stockController.text = totalStock.toString();
+                  }
+                });
+              },
             ),
             const SizedBox(height: 24),
 
@@ -307,7 +338,7 @@ class _AddProductPageState extends State<AddProductPage> {
         title,
         style: Theme.of(context).textTheme.titleMedium?.copyWith(
           fontWeight: FontWeight.bold,
-          color: Theme.of(context).primaryColor,
+          color: ColorConstants.primaryColor,
         ),
       ),
     );
@@ -322,9 +353,11 @@ class _AddProductPageState extends State<AddProductPage> {
     TextInputType keyboardType = TextInputType.text,
     String? Function(String?)? validator,
     List<TextInputFormatter>? inputFormatters,
+    bool enabled = true,
   }) {
     return TextFormField(
       controller: controller,
+      enabled: enabled,
       decoration: InputDecoration(
         labelText: label,
         hintText: hint,
@@ -451,6 +484,7 @@ class _AddProductPageState extends State<AddProductPage> {
                 ? null
                 : _manufacturerController.text.trim(),
         tags: tags,
+        variants: _variants, // Incluir variantes de color
         createdAt:
             _isEditing ? widget.productToEdit!.createdAt : DateTime.now(),
         updatedAt: DateTime.now(),

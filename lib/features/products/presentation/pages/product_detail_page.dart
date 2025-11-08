@@ -149,8 +149,8 @@ class ProductDetailPage extends StatelessWidget {
                   children: [
                     _buildInfoRow(
                       context,
-                      'Stock Actual',
-                      product.stock.toString(),
+                      product.hasVariants ? 'Stock Total' : 'Stock Actual',
+                      product.totalStock.toString(),
                       Icons.inventory,
                       valueColor: _getStockColor(product),
                     ),
@@ -163,6 +163,21 @@ class ProductDetailPage extends StatelessWidget {
                     ),
                   ],
                 ),
+
+                // Variantes de color
+                if (product.hasVariants) ...[
+                  const SizedBox(height: 24),
+                  _buildSectionTitle(context, 'Variantes de Color'),
+                  _buildInfoCard(
+                    context,
+                    children: [
+                      for (int i = 0; i < product.variants.length; i++) ...[
+                        if (i > 0) const Divider(),
+                        _buildVariantRow(context, product.variants[i]),
+                      ],
+                    ],
+                  ),
+                ],
 
                 // Alertas de stock
                 if (product.isOutOfStock) ...[
@@ -444,6 +459,76 @@ class ProductDetailPage extends StatelessWidget {
       case ProductCategory.other:
         return Icons.category;
     }
+  }
+
+  Widget _buildVariantRow(BuildContext context, ProductVariant variant) {
+    Color variantColor;
+    try {
+      variantColor = Color(
+        int.parse(variant.colorHex.replaceFirst('#', '0xFF')),
+      );
+    } catch (e) {
+      variantColor = Colors.grey;
+    }
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      child: Row(
+        children: [
+          // Color visual
+          Container(
+            width: 40,
+            height: 40,
+            decoration: BoxDecoration(
+              color: variantColor,
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(
+                color:
+                    Theme.of(context).brightness == Brightness.dark
+                        ? Colors.grey[700]!
+                        : Colors.grey[300]!,
+              ),
+            ),
+          ),
+          const SizedBox(width: 16),
+          // Información de la variante
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  variant.colorName,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.w500,
+                    fontSize: 16,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Row(
+                  children: [
+                    Icon(Icons.inventory_2, size: 16, color: Colors.grey[600]),
+                    const SizedBox(width: 4),
+                    Text(
+                      '${variant.stock} unidades',
+                      style: TextStyle(color: Colors.grey[600], fontSize: 14),
+                    ),
+                    if (variant.sku != null) ...[
+                      const SizedBox(width: 12),
+                      Icon(Icons.qr_code, size: 16, color: Colors.grey[600]),
+                      const SizedBox(width: 4),
+                      Text(
+                        variant.sku!,
+                        style: TextStyle(color: Colors.grey[600], fontSize: 14),
+                      ),
+                    ],
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   void _showDeleteDialog(BuildContext context) {

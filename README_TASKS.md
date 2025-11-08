@@ -502,3 +502,100 @@ Este documento detalla la implementación técnica completa del proyecto Stock L
   - _buildSectionTitle(): color ColorConstants.primaryColor (siempre rojo en ambos modos)
   - Títulos afectados: "Descripción", "Precios", "Inventario", "Identificación", "Información Adicional", "Etiquetas", "Fechas"
 
+- [x] **4.13.5** Corregir visibilidad de títulos de sección en AddProductPage
+  - Actualizar _buildSectionTitle() para usar ColorConstants.primaryColor
+  - Títulos afectados: "Información Básica", "Clasificación", "Precios", "Inventario", "Identificación", "Información Adicional", "Etiquetas", "Variantes de Color"
+  - Solución: Cambiar de Theme.of(context).colorScheme.onSurface a ColorConstants.primaryColor
+  - Asegurar visibilidad en modo oscuro (evitar color gris sobre fondo gris)
+
+- [x] **4.13.6** Mejorar contraste en ProductCard para modo oscuro
+  - Actualizar precio para usar ColorConstants.primaryColor (en lugar de Theme.of(context).primaryColor)
+  - Actualizar badge de variantes para usar ColorConstants.primaryColor:
+    - Container background: ColorConstants.primaryColor.withOpacity(0.1)
+    - Palette icon: ColorConstants.primaryColor
+    - Text count: ColorConstants.primaryColor
+  - Mejorar visibilidad y estética en modo oscuro
+  - Mantener consistencia visual con otros elementos de la UI
+
+### 4.14 Sistema de Variantes de Color
+- [x] **4.14.1** Crear ProductVariant entity en product.dart
+  - Campos: colorName (String), colorHex (String), stock (int), sku (String? opcional)
+  - Método copyWith() para actualizaciones inmutables
+  - Equatable para comparaciones
+  - toString() para debugging
+
+- [x] **4.14.2** Actualizar Product entity para soportar variantes
+  - Agregar campo: variants (List<ProductVariant>)
+  - Agregar getters: hasVariants (bool), totalStock (int)
+  - Modificar getters existentes: hasLowStock, isOutOfStock (usan totalStock)
+  - Actualizar copyWith() para incluir variants
+  - Actualizar props y toString()
+
+- [x] **4.14.3** Crear ProductVariantModel para serialización Firestore
+  - Métodos: fromMap(), toMap() para conversión con Firestore
+  - Métodos: fromEntity(), toEntity() para conversión con domain
+  - Parsing seguro de datos desde Firestore
+
+- [x] **4.14.4** Actualizar ProductModel para soportar variantes
+  - Agregar campo: variants (List<ProductVariantModel>)
+  - fromFirestore(): Parsear array de variantes desde Firestore
+  - toFirestore(): Serializar variantes a array de maps
+  - fromEntity(): Convertir variantes de Product a ProductModel
+  - toEntity(): Convertir variantes de ProductModel a Product
+
+- [x] **4.14.5** Crear VariantManager widget
+  - Gestión completa de variantes: agregar, editar, eliminar
+  - Lista visual con cards mostrando color, stock, SKU
+  - Cálculo y visualización de stock total
+  - Estado vacío con mensaje informativo
+  - Callback onVariantsChanged para actualizar parent
+
+- [x] **4.14.6** Crear _VariantDialog para agregar/editar variantes
+  - Formulario con validación: colorName* (TextField), stock* (número), sku (opcional)
+  - Selector visual de colores con 15 colores predefinidos comunes
+  - Indicador visual de color seleccionado (check icon)
+  - Parsing seguro de color hex desde/hacia Color
+  - Botones: Cancelar, Guardar (rojo con ColorConstants)
+
+- [x] **4.14.7** Integrar VariantManager en AddProductPage
+  - Agregar import de variant_manager.dart
+  - Agregar estado: _variants (List<ProductVariant>)
+  - Cargar variantes existentes en _loadProductData()
+  - Integrar VariantManager widget en sección de Inventario
+  - Deshabilitar campo stock si hay variantes (enabled: _variants.isEmpty)
+  - Actualizar stock automáticamente al cambiar variantes
+  - Validación condicional: stock requerido solo si no hay variantes
+  - Incluir variants al guardar producto en _saveProduct()
+  - Agregar parámetro enabled a _buildTextField()
+
+- [x] **4.14.8** Actualizar ProductDetailPage para mostrar variantes
+  - Modificar "Stock Actual" a "Stock Total" cuando hasVariants
+  - Usar product.totalStock en lugar de product.stock
+  - Agregar sección "Variantes de Color" (solo si hasVariants)
+  - Crear método _buildVariantRow() para mostrar cada variante:
+    - Container visual con color (40x40px, bordeado, redondeado)
+    - Nombre del color (Text bold)
+    - Stock de la variante (con icono inventory)
+    - SKU de la variante (opcional, con icono qr_code)
+    - Layout responsive con Row y Column
+
+- [x] **4.14.9** Actualizar ProductCard para indicar variantes
+  - Modificar _buildStockBadge() para usar product.totalStock
+  - Agregar badge de variantes (si hasVariants):
+    - Ícono palette + número de variantes
+    - Color: primaryColor con opacidad
+    - Posicionado antes del badge de stock
+  - Ajustar texto del badge: "Bajo: X" si hasVariants y hasLowStock
+  - Mantener Row para layout horizontal de badges
+
+- [x] **4.14.10** Testing de funcionalidad
+  - Compilación exitosa sin errores
+  - Product entity con variantes funciona correctamente
+  - ProductModel serializa/deserializa variantes correctamente
+  - VariantManager permite CRUD completo de variantes
+  - AddProductPage gestiona variantes correctamente
+  - ProductDetailPage muestra variantes visualmente
+  - ProductCard indica presencia de variantes
+  - Stock total se calcula correctamente
+  - hasLowStock/isOutOfStock usan totalStock
+

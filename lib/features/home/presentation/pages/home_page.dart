@@ -6,6 +6,7 @@ import '../../../products/presentation/pages/add_product_page.dart';
 import '../../../products/presentation/providers/products_provider.dart';
 import '../../../activity/presentation/widgets/recent_activities_widget.dart';
 import '../../../../shared/providers/theme_provider.dart';
+import '../../../../core/constants/color_constants.dart';
 
 /// Muestra un diálogo de confirmación antes de cerrar sesión
 void _showLogoutConfirmation(BuildContext context) {
@@ -15,7 +16,7 @@ void _showLogoutConfirmation(BuildContext context) {
       return AlertDialog(
         title: Row(
           children: [
-            Icon(Icons.logout, color: Theme.of(context).primaryColor),
+            Icon(Icons.logout, color: ColorConstants.primaryColor),
             const SizedBox(width: 12),
             const Text('Cerrar sesión'),
           ],
@@ -82,6 +83,8 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Inicio'),
+        backgroundColor: ColorConstants.primaryColor,
+        foregroundColor: ColorConstants.textOnPrimaryColor,
         actions: [
           // Botón para actualizar datos
           IconButton(
